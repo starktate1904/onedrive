@@ -1,0 +1,96 @@
+{% load static %}
+
+
+ <!-- Bootstrap core JavaScript-->
+<div>
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+ <!-- Core plugin JavaScript-->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+ <!-- Custom scripts for all pages-->
+<script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+ <!-- Page level plugins -->
+<script src="{% static 'vendor/chart.js/Chart.min.js'  %}"></script>
+
+ <!-- Page level custom scripts -->
+<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+
+
+
+<script src="{% static 'vendor2/apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'vendor2/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'vendor2/chart.js/chart.umd.js' %}"></script>
+<script src="{% static 'vendor2/echarts/echarts.min.js' %}"></script>
+<script src="{% static 'vendor2/quill/quill.js' %}"></script>
+<script src="{% static 'vendor2/simple-datatables/simple-datatables.js' %}"></script>
+<script src="{% static 'vendor2/tinymce/tinymce.min.js' %}"></script>
+<script src="{% static 'vendor2/php-email-form/validate.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+
+
+
+
+
+
+<script>
+    window.start_loader = function() {
+        $('body').removeClass('loaded')
+    }
+    window.end_loader = function() {
+        $('body').addClass('loaded')
+    }
+    window.uni_modal = function($title = '', $url = '', $size = "") {
+        start_loader()
+        $.ajax({
+            url: $url,
+            error: err => {
+                console.log()
+                alert("An error occured")
+            },
+            success: function(resp) {
+                if (resp) {
+                    $('#uni_modal .modal-title').html($title)
+                    $('#uni_modal .modal-body').html(resp)
+                    if ($size != '') {
+                        $('#uni_modal .modal-dialog').addClass($size + '  modal-dialog-centered')
+                    } else {
+                        $('#uni_modal .modal-dialog').removeAttr("class").addClass("modal-dialog modal-md modal-dialog-centered")
+                    }
+                    $('#uni_modal').modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        focus: true
+                    })
+                    $('#uni_modal').modal('show')
+                    end_loader()
+                }
+            }
+        })
+    }
+    window._conf = function($msg = '', $func = '', $params = []) {
+        $('#confirm_modal #confirm').attr('onclick', $func + "(" + $params.join(',') + ")")
+        $('#confirm_modal .modal-body').html($msg)
+        $('#confirm_modal').modal('show')
+    }
+    $(function() {
+
+    })
+</script>
+
+<script src="{% static 'posApp/assets/material-admin/vendors/js/vendor.bundle.base.js' %}"></script>
+<script src="{% static 'posApp/assets/material-admin/js/material.js' %}"></script>
+<script src="{% static 'posApp/assets/material-admin/js/misc.js' %}"></script>
+<script src="{% static 'posApp/assets/material-admin/js/dashboard.js' %}"></script>
+<script src="{% static 'posApp/assets/select2/dist/js/select2.full.js' %}"></script>
+
+
+
+
+</div>

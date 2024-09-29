@@ -1,0 +1,77 @@
+{% load static %}
+
+
+<style>
+
+    .success-icon {
+        font-size: 4rem; /* Adjust size as needed */
+        color: green;
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      
+      .animate-success {
+        animation: checkCircleAnimation 1s ease-in-out;
+      }
+      
+      @keyframes checkCircleAnimation {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+
+
+
+
+
+</style>
+
+
+
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" 
+   role="document">
+      <div class="modal-content">
+        <div class="modal-body"> 
+  
+          <div class="success-icon">
+            <i class="fas fa-check-circle animate-success"></i>
+          </div>
+          <p>Product added successfully.</p>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function() {
+        // Trigger the modal when a product is successfully added
+        $("#addProductForm").submit(function(e) {
+          e.preventDefault();
+      
+          // Simulate successful product addition (replace with actual logic)
+          setTimeout(function() {
+            $("#successModal").modal("show");
+          }, 1000);
+      
+          // Optionally, clear the form or redirect after a delay
+          setTimeout(function() {
+            $("#addProductForm").trigger("reset");
+            // window.location.href = "products/products.html";
+          }, 2000);
+        });
+      });
+
+
+
+
+
+</script>

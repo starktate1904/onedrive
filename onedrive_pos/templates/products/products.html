@@ -1,0 +1,446 @@
+{% extends 'dashboard/admin_dashboard.html' %}
+{% block content %}
+
+
+
+<!-- pagetitle -->
+<div class="pagetitle">
+    <h1>Products</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'auth_pos:admin_dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="{% url 'products:product_list' %}">All Products</a></li>
+      </ol>
+    </nav>
+</div>
+<!-- End Page Title -->
+
+
+<!-- indoc styling -->
+<style>
+.breadcrumb{
+
+    background-color: white;
+    border-radius: 30px;
+}
+
+.pagetitle{
+
+    margin-right: 20px;
+    margin-left: 20px;
+    
+
+
+}
+
+  #stark2{
+
+        margin-bottom: 30px;
+        border-radius: 30px;
+        margin-left: 20px;
+        margin-right: 20px;
+        
+
+
+  }
+
+ 
+  #addproductBtn{
+
+
+    margin-top: 5px;
+    margin-left: 30px;
+    margin-right: 10px;
+    border-radius: 30px;
+    margin-bottom: 30px;
+
+  }
+  #addbulkproductBtn{
+
+    margin-top: 5px;
+    margin-right: 30px;
+    border-radius: 30px;
+    margin-bottom: 30px;
+  }
+  #productlist{
+
+        size: 50%;
+        border-radius: 50%;
+
+
+
+  }
+  #cardtable{
+        margin-left: 20px;
+        margin-right: 20px;
+        
+
+
+
+  }
+  #navbarSearch{
+    margin-top: 5px;
+    margin-left: 2px
+  }
+  .nav-item{
+    margin-right: 5px;
+  }
+    
+        
+
+
+
+
+
+</style>
+<!-- end styling -->
+
+
+<!-- all products in all warehouses list -->
+ <section class="section profile">
+      <div class="row">
+  
+        <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+          <div class="card  border-left-success shadow h-100 py-2" id="cardtable">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Products</button>
+                </li>
+                <li class="nav-item">
+                <!-- Topbar Search -->
+                <form method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search ">
+                  <div class="input-group " id="navbarSearch">
+                      <input type="text" class="form-control bg-light  border-left-success shadow h-100 py-2 border-0 small" placeholder="Search Products..."
+                          aria-label="Search" name="search" aria-describedby="basic-addon2">
+                      <div class="input-group-append">
+                          <button class="btn btn-danger" type="submit">
+                              <i class="fas fa-search fa-sm"></i>
+                          </button>
+                      </div>
+                  </div>
+                </form>
+                </li>
+                <li class="nav-item">
+                <div>
+                  <button type="button" class="btn btn-success " id="addproductBtn" data-bs-toggle="modal" data-bs-target="#addproductModal-{{ forloop.counter }}">
+                    + Add Product
+                  </button>
+                  <button type="button" class="btn btn-info rounded-pill" id="addbulkproductBtn" data-bs-toggle="modal" data-bs-target="#addbulkproductModal-{{ forloop.counter }}"><i class="fas fa-upload fa-sm text-white-50"></i>
+                     Upload products
+                  </button>
+                </div>
+
+               
+                </li>
+                
+            
+              </ul>
+
+
+
+              <div class="tab-content pt-2">
+                <div class="tab-pane fade show active profile-overview  border-left-danger shadow h-100 py-2" id="products-overview">
+                    <div class="card-body">
+                        <div class="table-responsive table-borderless table-hover table-responsive-sm table-responsive-md table-responsive-lg table-striped ">
+                          <table class="table  table-bordered table-hover" id="dataTable" width="100%" cellspacing="1">
+                            <thead>
+                              <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Car Make</th>
+                                <th>Car Model</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Branch</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for product in products %}
+                              <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.description }}</td>
+                                <td>{{ product.make }}</td>
+                                <td>{{ product.model }}</td>
+                                <td>{{ product.quantity }}</td>
+                                <td>{{ product.price }}</td>
+                                <td>{{ product.branch.name }}</td>
+                                <td>
+                                  <a href="{% url 'products:product_update' product.id %}" data-bs-toggle="modal" data-bs-target="#editproduct-{{ forloop.counter }}">Edit</a> |
+                                  <a href="{% url 'products:product_delete' product.id %}" data-bs-toggle="modal" data-bs-target="#deletep-{{ forloop.counter }}">Delete</a>
+                                </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+
+
+                        <nav aria-label="Page navigation example" class="mt-4">
+                          <ul class="pagination  justify-content-end">
+                            {% if products.has_previous %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ products.previous_page_number }}&search={{ search }}">Previous</a>
+                            </li>
+                            {% endif %}
+                    
+                            {% for i in products.paginator.page_range %}
+                            <li class="page-item {% if i == products.number %}active{% endif %}">
+                              <a class="page-link" href="?page={{ i }}&search={{ search }}">{{ i }}</a>
+                            </li>
+                            {% endfor %}
+                    
+                            {% if products.has_next %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ products.next_page_number }}&search={{ search }}">Next</a>
+                            </li>
+                            {% endif %}
+                          </ul>
+                        </nav>
+                      </div>
+
+
+                </div>
+              </div><!-- End Bordered Tabs -->
+            </div>
+          </div>
+        </div>
+      </div>
+</section>
+<!-- End product list -->
+
+
+
+
+
+<!-- product creation modal -->
+<div class="modal fade" id="addproductModal-{{forloop.counter}}" tabindex="-1" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header" >
+                <h5 class="modal-title">Add product</h5>       
+            </div>
+            <!-- product creation form -->
+            <div class="modal-body" >
+                <form class="user" method="POST" action="{% url 'products:product_create' %}" id="addProductForm">
+                    {% csrf_token %}
+                        <div class="form-group row">
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control form-control-user" id="product_name"
+                                    placeholder="product name" name="name">
+                                    <div class="invalid-feedback">Name is required.</div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control form-control-user" id="product_description"
+                                    placeholder="product description" name="description">
+                                    <div class="invalid-feedback">Description is required.</div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control form-control-user" id="product_car_make"
+                                    placeholder="product car make" name="make">
+                                    <div class="invalid-feedback">Car Make is required.</div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control form-control-user" id="product_car_model"
+                                    placeholder="product car model" name="model">
+                                    <div class="invalid-feedback">Car Model is required.</div>
+                            </div>
+                        
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control form-control-user" id="product_price"
+                                    placeholder="product price" name="price">
+                                <div class="invalid-feedback">Price  is required.</div>
+                            </div>
+
+                            <div class="col-sm-6">
+                              <label for="branch">Branch:</label>
+                              <select name="branch" id="branch">
+                                  {% for branch in branch %}
+                                      <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
+                                  {% endfor %}
+                              </select>
+                            </div>
+
+                            <div class="col-sm-6">
+                              <input type="number" class="form-control form-control-user" id="product_quantity"
+                                  placeholder="product Quantity" name="quantity">
+                              <div class="invalid-feedback">quantity is required.</div>
+                          </div>
+
+                        </div>
+                        <button  class="btn btn-primary btn-user btn-block" type="submit" >
+                            Create product
+                        </button>  
+                </form>
+
+            </div>
+            <div class="modal-footer"  >
+                <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div> 
+        </div>
+</div>
+<!-- End product creation modal -->
+
+
+<!-- product bulk upload modal -->
+<div class="modal fade" id="addbulkproductModal-{{forloop.counter}}" tabindex="-1" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header" >
+            <h5 class="modal-title">Add product</h5>       
+        </div>
+        <!-- product creation form -->
+        <div class="modal-body" >
+            <form class="user" method="POST"  action="{% url 'products:upload_products_csv' %}" enctype="multipart/form-data" >
+                {% csrf_token %}
+                    <div class="form-group row">
+
+                        <div class="col-sm-6">
+                            <input type="file" class="form-control form-control-user" id="productcsvfile"
+                                placeholder="product csv file" name="csv_file">
+                                <div class="invalid-feedback">CSV file is required.</div>
+                        </div>
+
+                    </div>
+                    <button  class="btn btn-primary btn-user btn-block" type="submit" >
+                        Upload
+                    </button>  
+            </form>
+
+        </div>
+        <div class="modal-footer"  >
+            <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div> 
+    </div>
+</div>
+<!-- End product bulk uplaod modal -->
+
+
+
+
+<!-- Edit product Modal  -->
+ {% for product in products %}
+<div id="editproduct-{{forloop.counter}}" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{% url 'products:product_update' product.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header">						
+                    <h4 class="modal-title">Edit <b>{{product.name}}</b> product</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label> Product Name</label>
+                        <input type="text" class="form-control" name="name" value="{{ product.name }}" required>
+                        <input type="text" class="form-control" name="id" value="{{ product.id }}" hidden>
+                    </div>
+
+                    <div class="form-group">
+                        <label> Product Description</label>
+                        <input type="text" class="form-control" name="description" value="{{ product.description }}" required>
+                       >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Car Make</label>
+                        <input type="text" class="form-control" name="make" value="{{ product.make }}" required>
+                        
+                    </div>
+
+                    <div class="form-group">
+                        <label>Car Model</label>
+                        <input type="text" class="form-control" name="model" value="{{ product.model }}" required>
+                    </div>
+        
+                
+                    <div class="form-group">
+                        <label>Product Price</label>
+                        <input type="number" class="form-control"  name='price' value="{{ product.price }}" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Product Quantity</label>
+                      <input type="number" class="form-control"  name='price' value="{{ product.quantity }}" required>
+                  </div>
+
+
+                  <div class="form-group">
+                    <label for="branch">Branch:</label>
+                    <select name="branch" id="branch">
+                        {% for branch in branch %}
+                            <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="submit" class="btn btn-info" value="Save">
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<!-- End Edit product Modal  -->
+
+
+<!-- Delete product Modal HTML -->
+{% for product in products %}
+<div id="deletep-{{forloop.counter}}" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{% url 'products:product_delete' product.id %}" method="post">
+                {% csrf_token %}
+                <div class="modal-header">						
+                    <h4 class="modal-title">Delete {{product.name}}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="false">&times;</button>
+                </div>
+                <div class="modal-body">					
+                    <p>Are you sure you want to delete these Records?</p>
+                    <p class="text-warning"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer">
+                   
+                    <input type="submit" class="btn btn-danger" value="Delete">
+                </div>
+
+               
+            </form>
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+
+        </div>
+    </div>
+</div>
+{% endfor %}
+<!-- End Delete product Modal HTML -->
+
+
+
+
+{% endblock content%}
