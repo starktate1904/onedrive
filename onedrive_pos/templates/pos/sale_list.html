@@ -1,0 +1,25 @@
+{% extends 'dashboard/cashier_dashboard.html' %}
+{% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sale in sales %}
+        <tr>
+            <td>{{ sale.id }}</td>
+            <td>{{ sale.created_at }}</td>
+            <td>{{ sale.total_amount }}</td>
+            <td>{{ sale.status }}</td>
+            <td><a href="{% url 'pos:view_sale' sale.id %}">View</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

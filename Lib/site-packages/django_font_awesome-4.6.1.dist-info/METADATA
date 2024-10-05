@@ -1,0 +1,23 @@
+Metadata-Version: 2.0
+Name: django-font-awesome
+Version: 4.6.1
+Summary: Font Awesome packaged in a django app to speed up new applications and deployment.
+Home-page: https://github.com/benbacardi/django-font-awesome
+Author: Ben Cardy
+Author-email: benbacardi@gmail.com
+License: MIT
+Keywords: django,staticfiles
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Intended Audience :: Developers
+Classifier: Natural Language :: English
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Utilities
+
+UNKNOWN
+
+

@@ -3,8 +3,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import django.utils.timezone
 from branches.models import Branch
-from django.forms import model_to_dict
 
+
+class ProductManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_deleted=False)
 
 
 #  carPart model
@@ -16,18 +19,17 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    is_deleted = models.BooleanField(default=False)
+    objects = ProductManager()
+
+    def delete(self):
+        self.is_deleted = True
+        self.save()
+
+    def restore(self):
+        self.is_deleted = False
+        self.save()
 
     def __str__(self) -> str:
         return self.name
-
-    def to_json(self):
-        item = model_to_dict(self)
-        item['id'] = self.id
-        item['text'] = self.name
-        item['text'] = self.make
-        item['text'] = self.model
-        item['text'] = self.description
-        item['branch'] = self.branch.name
-        item['quantity'] = 1
-        item['total_product'] = 0
-        return item
+   

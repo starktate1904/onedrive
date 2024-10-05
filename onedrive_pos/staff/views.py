@@ -1,25 +1,13 @@
 from django.shortcuts import render
-import django
 from django.shortcuts  import render 
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate,logout
-from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from .models import *
 from branches.models import Branch
 from auth_pos.models import User
-from django.http import HttpResponse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
-import datetime
-from django.db.models import Sum
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import get_user_model
 from .models import User
 

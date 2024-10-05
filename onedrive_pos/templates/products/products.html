@@ -1,11 +1,9 @@
 {% extends 'dashboard/admin_dashboard.html' %}
 {% block content %}
 
-
-
 <!-- pagetitle -->
 <div class="pagetitle">
-    <h1>Products</h1>
+    <h1 class="h5 text-md font-weight-bold text-primary text-uppercase mb-1">Products</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'auth_pos:admin_dashboard' %}">Home</a></li>
@@ -16,8 +14,21 @@
 <!-- End Page Title -->
 
 
+
+
 <!-- indoc styling -->
 <style>
+
+  /* Add this to your CSS file */
+
+  .badge{
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+
+
 .breadcrumb{
 
     background-color: white;
@@ -28,22 +39,11 @@
 
     margin-right: 20px;
     margin-left: 20px;
+    margin-top: 30px;
     
 
 
 }
-
-  #stark2{
-
-        margin-bottom: 30px;
-        border-radius: 30px;
-        margin-left: 20px;
-        margin-right: 20px;
-        
-
-
-  }
-
  
   #addproductBtn{
 
@@ -51,7 +51,6 @@
     margin-top: 5px;
     margin-left: 30px;
     margin-right: 10px;
-    border-radius: 30px;
     margin-bottom: 30px;
 
   }
@@ -59,7 +58,6 @@
 
     margin-top: 5px;
     margin-right: 30px;
-    border-radius: 30px;
     margin-bottom: 30px;
   }
   #productlist{
@@ -85,28 +83,172 @@
   .nav-item{
     margin-right: 5px;
   }
+  #tablehead{
+
+    background-color: rgb(206, 96, 114);
+    color: white
+  }
+  #productqty{
+    font-size: large;
     
-        
+
+    
+  }
+  #product_name{
+    border-radius: 60px;
+  }
+  .user{
+    border-radius: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  #editmodal{
+
+    border-radius: 15px;
 
 
+    
+  }
+  input[type="text"] {
+    margin-bottom: 10px;
+    margin-right: auto;
+    
+    margin-top: auto;
+    width: auto;
+    
+    /* Styles for text input elements */
+}
 
+input[type="number"] {
+  margin-bottom: 10px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: auto;
+  width: fit-content;
+  
+  /* Styles for text input elements */
+}
+input[type="password"] {
+    margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: auto;
+    width: fit-content;
+    
+    /* Styles for text input elements */
+  }
+  input[type="email"] {
+    margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: auto;
+    width: fit-content;
+    
+    /* Styles for text input elements */
+  }
+input[type="option"] {
+  margin-bottom: 10px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: auto;
+  width: fit-content;
+  
+  /* Styles for text input elements */
+}
+input[type="file"] {
+  margin-bottom: 10px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: auto;
+  color: white;
+  width: 250px;
+  background-color: rgb(206, 96, 114);
+  border-radius: 10px;
+  
+  /* Styles for text input elements */
+}
+ 
+
+.form-control {
+border: 0;
+border-bottom: 1px solid rgb(206, 96, 114);
+border-radius: 0;
+padding: 8px;
+margin-left: auto;
+
+}
+.form-control:focus {
+
+box-shadow: none;
+}
+
+.floating-input {
+padding-top: 10px;
+padding-bottom: 10px;
+}
+
+.floating-input:focus, .floating-input:not(:placeholder-shown) {
+padding-top: 0;
+padding-bottom: 0;
+}
+
+.floating-input:not(:placeholder-shown) + label {
+position: absolute;
+top: -12px;
+left: 0;
+font-size: 80%;
+color: #777;
+}
+
+label {
+margin-left:40px;
+
+font-weight: bold;
+color: #333;
+}
+.custom-select {
+/* Your styles here */
+border: 1px solid #bd4242;
+padding: 5px;
+border-radius: 10px;
+width: auto;
+margin-left: 20px;
+
+}
+.custom-select:focus {
+border: 0;
+  border-bottom: 1px solid rgb(206, 96, 114);
+  border-radius: 0;
+  padding: 8px;
+
+}
+.btn{
+margin-top: 5px;
+
+
+}
+
+  
 
 
 </style>
 <!-- end styling -->
 
 
-<!-- all products in all warehouses list -->
+
+
+<!-- all products list -->
  <section class="section profile">
       <div class="row">
   
-        <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+        <div class ="col-12 col-md-12 col-lg-12 col-xl-12">
           <div class="card  border-left-success shadow h-100 py-2" id="cardtable">
             <div class="card-body pt-3">
               <!-- Bordered Tabs -->
               <ul class="nav nav-tabs nav-tabs-bordered">
                 <li class="nav-item">
-                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Products</button>
+                 
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview"> <a href="{% url 'products:product_list' %}">Products</a></button>
                 </li>
                 <li class="nav-item">
                 <!-- Topbar Search -->
@@ -124,18 +266,22 @@
                 </li>
                 <li class="nav-item">
                 <div>
-                  <button type="button" class="btn btn-success " id="addproductBtn" data-bs-toggle="modal" data-bs-target="#addproductModal-{{ forloop.counter }}">
-                    + Add Product
-                  </button>
-                  <button type="button" class="btn btn-info rounded-pill" id="addbulkproductBtn" data-bs-toggle="modal" data-bs-target="#addbulkproductModal-{{ forloop.counter }}"><i class="fas fa-upload fa-sm text-white-50"></i>
-                     Upload products
-                  </button>
-                </div>
-
-               
-                </li>
+                  <a href="#"  data-bs-toggle="modal" id="addproductBtn" data-bs-target="#addproductModal-{{ forloop.counter }}" class="btn btn-primary btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-plus"></i>
+                    </span>
+                    <span class="text">Product</span>
+                </a>
+                <a href="#" id="addbulkproductBtn" data-bs-toggle="modal" data-bs-target="#addbulkproductModal-{{ forloop.counter }}" class="btn btn-success btn-icon-split">
+                  <span class="icon text-white-50">
+                      <i class="fas fa-upload fa-sm text-white-50"></i>
+                  </span>
+                  <span class="text">upload products</span>
+              </a>
                 
-            
+                </div>
+                </li>
+          
               </ul>
 
 
@@ -144,12 +290,13 @@
                 <div class="tab-pane fade show active profile-overview  border-left-danger shadow h-100 py-2" id="products-overview">
                     <div class="card-body">
                         <div class="table-responsive table-borderless table-hover table-responsive-sm table-responsive-md table-responsive-lg table-striped ">
-                          <table class="table  table-bordered table-hover" id="dataTable" width="100%" cellspacing="1">
-                            <thead>
+                          <table class="table table-hover " id="dataTable" width="100%" cellspacing="1">
+                            <thead id="tablehead">
                               <tr>
+                                
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Description</th>
+                                
                                 <th>Car Make</th>
                                 <th>Car Model</th>
                                 <th>Quantity</th>
@@ -158,24 +305,47 @@
                                 <th>Action</th>
                               </tr>
                             </thead>
+                            {% if products %}
                             <tbody>
                               {% for product in products %}
                               <tr>
                                 <td>{{ product.id }}</td>
                                 <td>{{ product.name }}</td>
-                                <td>{{ product.description }}</td>
                                 <td>{{ product.make }}</td>
                                 <td>{{ product.model }}</td>
-                                <td>{{ product.quantity }}</td>
+                                <td {% if product.quantity < 3 %}>
+                                      <span class="badge badge-danger">Low Stock</span>
+                                  {% else %}
+                                      <span class="badge badge-success">In Stock</span>
+                                  {% endif %}
+                                  <span id="productqty">{{product.quantity}}</span>
+                                </td>
                                 <td>{{ product.price }}</td>
                                 <td>{{ product.branch.name }}</td>
                                 <td>
-                                  <a href="{% url 'products:product_update' product.id %}" data-bs-toggle="modal" data-bs-target="#editproduct-{{ forloop.counter }}">Edit</a> |
-                                  <a href="{% url 'products:product_delete' product.id %}" data-bs-toggle="modal" data-bs-target="#deletep-{{ forloop.counter }}">Delete</a>
+
+                                  <a href="{% url 'products:product_update' product.id %}" data-bs-toggle="modal" data-bs-target="#editproduct-{{ forloop.counter }}" class="btn btn-info btn-circle btn-sm">
+                                    <i class="fas fa-pencil" ></i><i class="fa-solid fa-pencil"></i>
+                                </a>
+                              |
+                                  <a href="{% url 'products:product_delete' product.id %}" data-bs-toggle="modal" data-bs-target="#deletep-{{ forloop.counter }}" 
+                                  class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i>
+                                </a>
                                 </td>
                               </tr>
                               {% endfor %}
                             </tbody>
+                            {% else %}
+                            <tbody>
+                              <tr>
+                                <td colspan="9" class="text-center">
+                                  No Products Found Click the <b>+ product</b> button on the top to add a new product 
+                                </td>
+
+                              </tr>
+
+                            </tbody>
+                            {% endif %}
                           </table>
                         </div>
 
@@ -215,75 +385,73 @@
 
 
 
-
-
 <!-- product creation modal -->
 <div class="modal fade" id="addproductModal-{{forloop.counter}}" tabindex="-1" >
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header" >
-                <h5 class="modal-title">Add product</h5>       
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content border-left-primary shadow h-100 py-2 ">
+              <div class="modal-header">						
+                <h4 class="modal-title "><span class="badge badge-warning">Add  Product</span></h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <!-- product creation form -->
             <div class="modal-body" >
-                <form class="user" method="POST" action="{% url 'products:product_create' %}" id="addProductForm">
-                    {% csrf_token %}
-                        <div class="form-group row">
-
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control form-control-user" id="product_name"
-                                    placeholder="product name" name="name">
-                                    <div class="invalid-feedback">Name is required.</div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control form-control-user" id="product_description"
-                                    placeholder="product description" name="description">
-                                    <div class="invalid-feedback">Description is required.</div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control form-control-user" id="product_car_make"
-                                    placeholder="product car make" name="make">
-                                    <div class="invalid-feedback">Car Make is required.</div>
-                            </div>
-
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control form-control-user" id="product_car_model"
-                                    placeholder="product car model" name="model">
-                                    <div class="invalid-feedback">Car Model is required.</div>
-                            </div>
+              <form method="POST" action="{% url 'products:product_create' %}" enctype="multipart/form-data" id="createproduct" >
+                {% csrf_token %}
+               
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label> Product Name</label>
+                        <input type="text" class="form-control floating-input" name="name"  required>
                         
-                            <div class="col-sm-6">
-                                <input type="number" class="form-control form-control-user" id="product_price"
-                                    placeholder="product price" name="price">
-                                <div class="invalid-feedback">Price  is required.</div>
-                            </div>
+                    </div>
 
-                            <div class="col-sm-6">
-                              <label for="branch">Branch:</label>
-                              <select name="branch" id="branch">
-                                  {% for branch in branch %}
-                                      <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
-                                  {% endfor %}
-                              </select>
-                            </div>
+                    <div class="form-group">
+                        <label> Product Description</label>
+                        <input type="text" class="form-control" name="description"  required>
+                       
+                    </div>
 
-                            <div class="col-sm-6">
-                              <input type="number" class="form-control form-control-user" id="product_quantity"
-                                  placeholder="product Quantity" name="quantity">
-                              <div class="invalid-feedback">quantity is required.</div>
-                          </div>
+                    <div class="form-group">
+                        <label>Car Make</label>
+                        <input type="text" class="form-control" name="make"  required>
+                        
+                    </div>
 
-                        </div>
-                        <button  class="btn btn-primary btn-user btn-block" type="submit" >
-                            Create product
-                        </button>  
-                </form>
+                    <div class="form-group">
+                        <label>Car Model</label>
+                        <input type="text" class="form-control" name="model"  required>
+                    </div>
+        
+                
+                    <div class="form-group">
+                        <label>Product Price</label>
+                        <input type="number" class="form-control floating-input"  name='price'  required>
+                    </div>
+
+                    <div class="form-group">
+                      <label>Product Quantity</label>
+                      <input type="number" class="form-control floating-input"   name='quantity'  required>
+                  </div>
+
+
+                  <div class="form-group">
+                    <label for="branch">Branch:</label>
+                    <select name="branch" id="branch" class="custom-select">
+                        {% for branch in branch %}
+                            <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                </div>
+            </form>
+              
 
             </div>
             <div class="modal-footer"  >
-                <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Close</button>
+                <button  class="btn btn-primary btn-user " type="submit" form="createproduct" >
+                  Save product
+              </button>  
             </div>
             </div> 
         </div>
@@ -293,32 +461,31 @@
 
 <!-- product bulk upload modal -->
 <div class="modal fade" id="addbulkproductModal-{{forloop.counter}}" tabindex="-1" >
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header" >
-            <h5 class="modal-title">Add product</h5>       
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content border-left-success shadow h-100 py-2 ">
+        <div class="modal-header text-center" >
+            <h4 class="modal-title"><span class="badge badge-warning">upload products</span></h4>       
         </div>
         <!-- product creation form -->
-        <div class="modal-body" >
+        <div class="modal-body text-center" >
             <form class="user" method="POST"  action="{% url 'products:upload_products_csv' %}" enctype="multipart/form-data" >
                 {% csrf_token %}
                     <div class="form-group row">
-
-                        <div class="col-sm-6">
-                            <input type="file" class="form-control form-control-user" id="productcsvfile"
-                                placeholder="product csv file" name="csv_file">
+                      <div class="form-group">
+                        <label>Products csv file (.csv)</label>
+                        <input type="file" class="form-control floating-input" id="productcsvfile"
+                                placeholder="product csv file" name="csv_file" required>
                                 <div class="invalid-feedback">CSV file is required.</div>
-                        </div>
+                     
+                    </div>
 
                     </div>
-                    <button  class="btn btn-primary btn-user btn-block" type="submit" >
-                        Upload
-                    </button>  
+                   
             </form>
-
         </div>
-        <div class="modal-footer"  >
-            <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Close</button>
+        <div class="modal-footer text-center"  >
+          <button  class="btn btn-primary btn-user " type="submit" >Upload</button>  
+          <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Close</button>
         </div>
         </div> 
     </div>
@@ -326,30 +493,53 @@
 <!-- End product bulk uplaod modal -->
 
 
+<!-- product details modal -->
+{% for product in products %}
+<div class="modal fade" id="viewproductModal-{{forloop.counter}}" tabindex="-1" >
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content">
+      <div class="modal-header" >
+          <h5 class="modal-title">{{product.name}}</h5>       
+      </div>
+      
+      <div class="modal-body" >
+        
+      </div>
+      <div class="modal-footer"  >
+          <button type="button" class="btn btn-danger rounded-pill" data-bs-dismiss="modal">Close</button>
+      </div>
+      </div> 
+  </div>
+</div>
+{% endfor %}
+<!-- End product details modal -->
+
+
+
 
 
 <!-- Edit product Modal  -->
  {% for product in products %}
 <div id="editproduct-{{forloop.counter}}" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{% url 'products:product_update' product.id %}" enctype="multipart/form-data">
+    <div class="modal-dialog modal-sm modal-dialog-centered" >
+        <div class="modal-content border-left-danger shadow h-100 py-2 " id="editmodal">
+            <form method="POST" action="{% url 'products:product_update' product.id %}" enctype="multipart/form-data" id="editproductsform" >
                 {% csrf_token %}
                 <div class="modal-header">						
-                    <h4 class="modal-title">Edit <b>{{product.name}}</b> product</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title "><span class="badge badge-success">Update <br><b>{{product.name}}'s <br> Details</b></span></h4>
+                    <button type="button" class="close"  data-bs-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
                 <div class="modal-body">					
                     <div class="form-group">
                         <label> Product Name</label>
-                        <input type="text" class="form-control" name="name" value="{{ product.name }}" required>
+                        <input type="text" class="form-control floating-input" name="name" value="{{ product.name }}" required>
                         <input type="text" class="form-control" name="id" value="{{ product.id }}" hidden>
                     </div>
 
                     <div class="form-group">
                         <label> Product Description</label>
                         <input type="text" class="form-control" name="description" value="{{ product.description }}" required>
-                       >
+                       
                     </div>
 
                     <div class="form-group">
@@ -366,43 +556,29 @@
                 
                     <div class="form-group">
                         <label>Product Price</label>
-                        <input type="number" class="form-control"  name='price' value="{{ product.price }}" required>
+                        <input type="number" class="form-control floating-input"  name='price' value="{{ product.price }}" required>
                     </div>
 
                     <div class="form-group">
                       <label>Product Quantity</label>
-                      <input type="number" class="form-control"  name='price' value="{{ product.quantity }}" required>
+                      <input type="number" class="form-control floating-input"   name='quantity' value="{{ product.quantity }}" required>
                   </div>
 
 
                   <div class="form-group">
                     <label for="branch">Branch:</label>
-                    <select name="branch" id="branch">
+                    <select name="branch" id="branch" class="custom-select">
                         {% for branch in branch %}
                             <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
                         {% endfor %}
                     </select>
                   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-info" value="Save">
-                </div>
                 </div>
             </form>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary " data-bs-dismiss="modal">Cancel</button>
+              <input type="submit" class="btn btn-success"  form="editproductsform" value="Save">
+          </div>
         </div>
     </div>
 </div>
@@ -413,27 +589,24 @@
 <!-- Delete product Modal HTML -->
 {% for product in products %}
 <div id="deletep-{{forloop.counter}}" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="{% url 'products:product_delete' product.id %}" method="post">
+    <div class="modal-dialog modal-dialog-centered modal-sm ">
+        <div class="modal-content border-left-danger shadow h-100 py-2">
+            <form action="{% url 'products:product_delete' product.id %}" method="post" id="deleteform">
                 {% csrf_token %}
                 <div class="modal-header">						
-                    <h4 class="modal-title">Delete {{product.name}}</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="false">&times;</button>
+                    <h4 class="modal-title "><span class="badge badge-warning">Delete <br>{{product.name}}</span></h4>
+                    <button type="button" class="close"  data-bs-dismiss="modal" aria-hidden="false">&times;</button>
                 </div>
-                <div class="modal-body">					
-                    <p>Are you sure you want to delete these Records?</p>
-                    <p class="text-warning"><small>This action cannot be undone.</small></p>
+                <div class="modal-body text-center"><p>Are you sure you want to delete this product ?</p>
+                    <p class="text-warning text-lg-center">This action cannot be undone.</p>
                 </div>
-                <div class="modal-footer">
-                   
-                    <input type="submit" class="btn btn-danger" value="Delete">
-                </div>
-
                
             </form>
-            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary " data-bs-dismiss="modal">Cancel</button>
+              <input type="submit" class="btn btn-danger" value="Delete" form="deleteform">
+            </div>
+          
         </div>
     </div>
 </div>

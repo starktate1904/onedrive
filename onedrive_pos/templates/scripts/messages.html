@@ -1,0 +1,30 @@
+{% load static %}
+
+<!-- Messages Modal -->
+<div class="modal fade" id="message-modal" tabindex="-1" aria-labelledby="message-modal-label" aria-hidden="true">
+  <div class="modal-dialog  modal-sm">
+    <div class="modal-content  border-left-danger shadow  py-2">
+      <div class="modal-header  bg-primary">
+        <h5 class="modal-title" id="message-modal-label">Messages</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for message in messages %}
+          <p class="mb-0">{{ message }}</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript to show and hide the modal -->
+<script>
+  var messageModal = new bootstrap.Modal(document.getElementById('message-modal'));
+  messageModal.show();
+
+  setTimeout(function() {
+    messageModal.hide();
+  }, 3000);
+</script>
+
+

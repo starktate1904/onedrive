@@ -1,0 +1,24 @@
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in sale_items %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td><input type="number" name="quantity_{{ item.product.id }}" id="quantity_{{ item.product.id }}" value="{{ item.quantity }}"></td>
+            <td>{{ item.product.price }}</td>
+            <td><span id="total_{{ item.product.id }}">{{ item.total }}</span></td>
+            <td><button type="button" class="btn btn-danger remove-from-sale" data-product-id="{{ item.product.id }}">Remove</button></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

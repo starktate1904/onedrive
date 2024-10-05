@@ -1,90 +1,48 @@
 {% block content %}
+{% load static %}
 
  <!-- Page Heading -->
- <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-black-900">{{ greeting}} <b>{{ user.username }}</b></h1>
-    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i 
-        class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+ <div class="d-sm-flex align-items-center justify-content-between mb-4" id="pageheading">
+    <div class="d-flex align-items-center">
+      
+        <h1 class="h3 mb-0 text-black-900 ml-3  text-uppercase" id="greeting">{{ greeting}} <b>{{ user.username }}</b></h1>
+        <img src="{{ user_profile.profile_pic.url }}" alt="Profile Picture" class="profile-picture">
+        <p class="h3 mb-0 text-black-900 ml-3  text-uppercase " id="today">Today is <b>{{ today }}</b></p>
+</div>
+  
+    
 </div>
 
 <!-- Content Row -->
 <div class="row">
 
-    <!-- Branches Card  -->
+    <!-- Earnings (Monthly) Card  -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Avg Earning per Month</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{avg_month}} $</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-3x text-black-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Annua) Card  -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                             OneDrive Branches</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{branches_count}}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-building fa-3x text-black-400"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Employees Card -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-info shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">All Employees
-                        </div>
-                        <div class="row no-gutters align-items-center">
-                            <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{employee_count}}</div>
-                            </div>
-                           
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-people-carry fa-3x text-black-400"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Products-->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                            Products</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{products_count}}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-car fa-3x text-black-400"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- container row -->
-<div class="row">
-
-  
-
-    <!-- sales Card  -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                             Total Sales</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                            Earnings (Annual)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{annual_earnings}} $</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-3x text-black-400"></i>
@@ -94,6 +52,27 @@
         </div>
     </div>
 
+
+     <!-- sales Card  -->
+     <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                             Total Sales</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_sales}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-balance-scale fa-3x text-black-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
     <!-- Revenue Card -->
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-info shadow h-100 py-2">
@@ -104,24 +83,98 @@
                         </div>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"></div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{total_revenue}}</div>
                             </div>
                            
                         </div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-balance-scale fa-3x text-black-400"></i>
+                        <i class="fas fa-dollar-sign fa-3x text-black-400"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+
+
+
    
 </div>
 
-<!-- Content Row -->
+<!-- container row -->
+<div class="row">
 
+   <!-- Branches Card  -->
+<div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+        <a href="{% url 'branches:branch_list' %}">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                         OneDrive Branches</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{branches_count}}</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-building fa-3x text-black-400"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+    </div>
+</div>
+
+<!-- Employees Card -->
+<div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+        <a href="{% url 'staffs:employee_list'  %}">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">All Employees
+                    </div>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col-auto">
+                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{employee_count}}</div>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-people-carry fa-3x text-black-400"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+    </div>
+</div>
+
+<!-- Products-->
+<div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2"> 
+        <a href="{% url 'products:product_list'  %}">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Products</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{products_count}}</div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-car fa-3x text-black-400"></i>
+                </div>
+            </div>
+        </div>
+        
+    </a>
+       
+    </div >
+</div>
+
+</div>
+
+<!-- Content Row -->
 <div class="row">
 
     <!-- Area Chart -->
@@ -130,21 +183,7 @@
             <!-- Card Header - Dropdown -->
             <div
                 class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                <div class="dropdown no-arrow">
-                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                        aria-labelledby="dropdownMenuLink">
-                        <div class="dropdown-header">Dropdown Header:</div>
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
+                <h6 class="m-0 font-weight-bold text-primary">Month Earnings Overview</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
@@ -155,27 +194,13 @@
         </div>
     </div>
 
-    <!-- Pie Chart -->
-    <div class="col-xl-4 col-lg-5">
+     <!-- Pie Chart -->
+     <div class="col-xl-4 col-lg-5">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div
                 class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                <div class="dropdown no-arrow">
-                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                        aria-labelledby="dropdownMenuLink">
-                        <div class="dropdown-header">Dropdown Header:</div>
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
+                <h6 class="m-0 font-weight-bold text-primary">Best selling products</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body">
@@ -183,29 +208,52 @@
                     <canvas id="myPieChart"></canvas>
                 </div>
                 <div class="mt-4 text-center small">
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-primary"></i> Direct
-                    </span>
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> Social
-                    </span>
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-info"></i> Referral
-                    </span>
+                    <div class="mr-2">
+                        <i class="fas fa-circle text-primary mr-2"></i>{{top_products_names_list.0}}
+                    </div>
+                    <div class="mr-2 mt-2">
+                        <i class="fas fa-circle text-success mr-2"></i>{{top_products_names_list.1}}
+                    </div>
+                    <div class="mr-2 mt-2">
+                        <i class="fas fa-circle text-info mr-2"></i>{{top_products_names_list.2}}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Content Row -->
-<div class="row">
 
 
 </div>
 
 
-<style>
+
+<style> 
+    
+    .profile-picture {
+ 
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto;
+        display: block;
+      }
+    #greeting{
+        color:  rgb(96, 129, 206);
+        margin-right: 10px;
+
+    }
+    #today{
+        color: rgb(96, 129, 206);
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    #pageheading{
+        margin-left: 10%;
+        margin-top: 20px;
+        margin-right: 10px;
+       
+    }
 
     .nav-item{
         font-size: larger;
@@ -215,13 +263,30 @@
     .card{
         border-radius: 30px;
     }
+    #pheading{
+        margin-top: 30px;
+    }
+
     
     
     
+
 </style>
 
+{% block javascripts %}
+<!--Chart JS-->
+<script src="{% static 'chart.js/Chart.min.js' %}"></script>
+<!--Monthly earnings variable-->
+<input type="hidden" id="monthly_earnings"  value="{{monthly_earnings|safe}}">
+<!--Top products names variable-->
+<input type="hidden" id="top_products_names"  value="{{top_products_names}}">
+<!--Top products quantity variable-->
+<input type="hidden" id="top_products_quantity"  value="{{top_products_quantity|safe}}">
+<!--Chart area-->
+<script src="{% static 'chart.js/admin_chart_area.js' %}"></script>
+<!--Chart pie-->
+<script src="{% static 'chart.js/admin_chart_pie.js' %}"></script>
+{% endblock javascripts %}
 
 
-
-
-{% endblock content%}
+{% endblock content %}

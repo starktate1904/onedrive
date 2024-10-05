@@ -1,0 +1,302 @@
+{% extends 'dashboard/cashier_dashboard.html' %}
+{% block content %}
+<h1>Create Sale</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <input type="text" id="product-search" class="form-control" placeholder="Search products">
+            <div id="search-results"></div>
+        </div>
+        <div class="col-md-6">
+            <table class="table" id="sale-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="sale-table-body">
+                    {% if sale_items %}
+                    {% for item in sale_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td><input type="number" name="quantity_{{ item.product.id }}" id="quantity_{{ item.product.id }}" value="{{ item.quantity }}" class="quantity-input" data-price="{{ item.product.price }}"></td>
+                        <td>{{ item.product.price }}</td>
+                        <td><span id="total_{{ item.product.id }}">{{ item.total }}</span></td>
+                        <td><button type="button" class="btn btn-danger remove-from-sale" data-product-id="{{ item.product.id }}">Remove</button></td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No sale items</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <p>Total: <span id="total">{{ total_amount }}</span></p>
+            <input type="hidden" id="sale-id" value="{{ sale.id }}">
+            <button type="button" class="btn btn-primary complete-sale">Complete Sale</button>
+            <div class="form-group">
+                <label for="amount-paid">Amount Paid:</label>
+                <input type="number" class="form-control" id="amount-paid" placeholder="Enter amount paid">
+            </div>
+            <button type="button" class="btn btn-primary complete-sale-btn">Complete Sale</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Add this to your HTML page -->
+<div id="message-modal" style="display: none;">
+    <div class="modal-content">
+        <span id="message-text"></span>
+    </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="saleCompletedModal" tabindex="-1" role="dialog" aria-labelledby="saleCompletedModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="saleCompletedModalLabel">Sale Completed</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center">
+            <i class="fas fa-check-circle fa-5x text-success"></i>
+            <h4>Sale Completed Successfully!</h4>
+            <p>Thank you for completing the sale.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<style>
+    /* Add this to your CSS file */
+#message-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: center;
+}
+
+#message-text {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+      
+      .modal-header {
+        background-color: #4CAF50;
+        color: #fff;
+        border-radius: 10px 10px 0 0;
+      }
+      
+      .modal-title {
+        font-weight: bold;
+      }
+      
+      .modal-body {
+        padding: 20px;
+      }
+      
+      .modal-footer {
+        background-color: #f9f9f9;
+        border-radius: 0 0 10px 10px;
+      }
+      
+      .fa-check-circle {
+        color: #4CAF50;
+      }
+      
+      .text-success {
+        color: #4CAF50;
+      }
+
+
+
+
+</style>
+
+
+
+<script>
+$(document).ready(function() {
+    // Product search functionality
+    $('#product-search').on('input', function() {
+        var searchTerm = $(this).val();
+        $.ajax({
+            url: "{% url 'pos:search_products' %}",  // Replace with the actual URL
+            type: 'GET',
+            data: {
+                search_term: searchTerm
+            },
+            success: function(data) {
+                $('#search-results').empty();
+                for (var i = 0; i < data.length ; i++) {
+ var product = data[i];
+                    $('#search-results').append(
+                        '<div class="search-result">' +
+                            '<p>' + product.name + '</p>' +
+                            '<p>' + product.price + '</p>' +
+                            '<button class="add-to-sale" data-product-id="' + product.id + '">Add to Sale</button>' +
+                        '</div>'
+                    );
+                }
+            }
+        });
+    });
+
+    // Add product to sale
+    $(document).on('click', '.add-to-sale', function() {
+        var productId = $(this).data('product-id');
+        var quantity = 1; // Set the quantity to 1 by default
+        var saleId = $('#sale-id').val(); // Get the sale ID from the hidden input field
+        $.ajax({
+            url: "{% url 'pos:add_product_to_sale'%}",
+            type: 'POST',
+            data: {
+                product_id: productId,
+                quantity: quantity,
+                sale_id: saleId
+            },
+            headers: {
+                'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(data) {
+                // Update the sale table and total amount
+                $('#sale-table-body').html(data.sale_table);
+                $('#total').text(data.total_amount);
+                console.log(data); // Log the response from the server
+            }
+        });
+    });
+
+
+    // Update total when quantity changes
+    $(document).on('input', '.quantity-input', function() {
+        var quantity = $(this).val();
+        var price = $(this).data('price');
+        var total = quantity * price;
+        $(this).closest('tr').find('td:nth-child(4)').text(total);
+        updateTotal();
+    });
+    
+    // Update total when quantity changes
+    function updateTotal() {
+        var total = 0;
+        $('#sale-table-body tr').each(function() {
+            total += parseFloat($(this).find('td:nth-child(4)').text());
+        });
+        $('#total').text(total);
+    }
+
+
+
+
+
+   // Update total when quantity changes
+    $(document).on('input', '.quantity-input', function() {
+        var quantity = $(this).val();
+        var price = $(this).data('price');
+        var total = quantity * price;
+        $(this).closest('tr').find('td:nth-child(4)').text(total);
+        updateTotal();
+    });
+
+    // Update total when quantity changes
+    function updateTotal() {
+        var total = 0;
+        $('#sale-table-body tr').each(function() {
+            total += parseFloat($(this).find('td:nth-child(4)').text());
+        });
+        $('#total').text(total);
+    }
+   
+   
+   
+    // Complete sale 
+    $(document).on('click', '.complete-sale-btn', function() {
+        var saleId = $('#sale-id').val();
+        var amountPaid = $('#amount-paid').val();
+        $.ajax({
+            url: "{% url 'pos:complete_sale' %}",
+            type: 'POST',
+            data: {
+                sale_id: saleId,
+                amount_paid: amountPaid
+            },
+            headers: {
+                'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(data) {
+                // Update the sale table and total amount
+                $('#sale-table-body').html('');
+                $('#total').text ('0.00');
+                // Show the sale completed modal
+                $('#saleCompletedModal').modal('show');
+                // You can also redirect the user to the sale list page
+                // window.location.href = "{% url 'pos:sale_list' %}";
+            }
+        });
+    });
+
+    // Remove product from sale
+    $(document).on('click', '.remove-from-sale', function() {
+        var productId = $(this).data('product-id');
+        var saleId = $('#sale-id').val();
+        $.ajax({
+            url: "{% url 'pos:remove_product_from_sale' %}",
+            type: 'POST',
+            data: {
+                product_id: productId,
+                sale_id: saleId
+            },
+            headers: {
+                'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(data) {
+                // Update the sale table and total amount
+                $('#sale-table-body').html(data.sale_table);
+                $('#total').text(data.total_amount);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

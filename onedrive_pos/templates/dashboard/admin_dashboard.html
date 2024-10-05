@@ -13,6 +13,7 @@
 
     {% include 'scripts/links.html' %}
     {% include 'scripts/scripts.html' %}
+    
 
 </head>
 
@@ -32,34 +33,14 @@
             <!-- Main Content -->
             <div id="content">
 
-                <!-- Topbar -->
-                 {%  include 'bars/topbar.html' %}
               
-                <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
                 {% block content %}
                 <div class="container-fluid">
                      <!-- Message -->
-                     {% if messages %}
-                     <div class="mdc-layout-grid py-1">
-                         <div class="mdc-layout-grid__inner">
-                             {% for message in messages %}
-                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-                                 <div class="alert alert-{{message.tags}} w-100 rounded-0 mb-0">
-                                     <div class="d-flex w-100">
-                                         <div class="col-auto flex-shrink-1 flex-grow-1">{{ message }}</div>
-                                         <div class="col-auto text-center">
-                                             <button class="btn-close btn-sm text-sm" type="button" onclick="$(this).closest('.alert').remove()"></button>
-                                         </div>
-                                     </div>
- 
-                                 </div>
-                             </div>
-                             {% endfor %}
-                         </div>
-                     </div>
-                     {% endif %}
+                     <!--Messages will appear here-->
+                  
 
                    {% include 'dashboard/overviews/admin.html' %}
 
@@ -83,5 +64,6 @@
    
 
 </body>
+
 
 </html>

@@ -6,3 +6,4 @@ from branches.models import Branch
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE) 
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True, default=None)
+   

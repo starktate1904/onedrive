@@ -1,29 +1,32 @@
 
 from django.shortcuts  import render 
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate,logout
-from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 from django.urls import reverse
 from .models import *
 from branches.models import Branch
-from django.http import HttpResponse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
 import csv
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-import datetime
-from django.db.models import Sum
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import permission_required
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
+from datetime import timedelta
 
 
 
 
+# soft deletign a product after it reaches 0 on quantity
+@user_passes_test(lambda user: user.has_perm('main.view_product_list'))
+@receiver(post_save, sender=Product)
+def soft_delete_product(sender, instance, **kwargs):
+    if isinstance(instance.quantity, int) and instance.quantity <= 0:
+        instance.is_deleted = True
+        instance.save()
 
 
 
@@ -32,7 +35,7 @@ from django.contrib.auth.decorators import permission_required
 @user_passes_test(lambda user: user.has_perm('main.view_product_list'))
 def product_list(request):
     branch = Branch.objects.all()
-    products = Product.objects.all()
+    products = Product.objects.filter(is_deleted=False)
 
     # Get the search query from the GET parameters
     search_query = request.GET.get('search')
@@ -61,7 +64,12 @@ def product_list(request):
         products = paginator.page(paginator.num_pages) 
 
 
-    context = {'products': products, 'paginator': paginator, 'search_query': search_query,'branch':branch}
+    context = {
+        "active_icon": "products",
+        'products': products,
+                'paginator': paginator, 
+                'search_query': search_query,
+                'branch':branch}
     return render(request, 'products/products.html', context)
 
 
@@ -70,7 +78,7 @@ def product_list(request):
 @user_passes_test(lambda user: user.has_perm('main.view_branch_list'))
 @user_passes_test(lambda user: user.has_perm('main.add_product'))
 def upload_products_csv(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(is_deleted=False)
 
     context = {
         'products': products,
@@ -113,6 +121,7 @@ def upload_products_csv(request):
                 except ValidationError as e:  # Handle validation errors
                     message = f"Error saving product: {e}"
                     messages.error(request, message)  # Display validation error message
+            messages.success(request, 'Products uploaded successfully!')
             return HttpResponseRedirect(reverse('products:product_list'))
         else:
             messages.error(request, 'Invalid file format. Please upload a CSV file.')
@@ -139,16 +148,19 @@ def product_create(request):
         # Validate input
         if not make or not name  or not model or not description or not price or not quantity or not branch_id :
             messages.error(request, 'Please fill in all fields')
-            return render(request, 'layouts/products/products_list.html')
+            return render(request, 'products/products.html')
          # Get the branch object
         branch = Branch.objects.get(id=branch_id)
         # Create the product object
         Product.objects.create(name=name, make=make, model=model, description=description, price=price, branch=branch, quantity=quantity,)
-        messages.success(request, 'Product  created successfully!')
+        messages.success(request, 'Product created successfully!')
+        context={
+            'message': messages.get_messages(request)
+        }
         return redirect('products:product_list')  # Redirect to branch list after success
     branch = Branch.objects.all()
       
-    return render(request, 'products/products.html',{'branch': branch} )
+    return render(request, 'products/products.html',{'branch': branch},{'message': messages.get_messages(request)})
 
 
 
@@ -159,7 +171,6 @@ def product_create(request):
 @user_passes_test(lambda user: user.has_perm('main.view_product_list'))
 @user_passes_test(lambda user: user.has_perm('main.view_branch_list'))
 @user_passes_test(lambda user: user.has_perm('main.update_product'))
-
 def product_update(request, product_id):
     product = Product.objects.get(pk=product_id)
     
@@ -193,12 +204,12 @@ def product_update(request, product_id):
             messages.error(request, 'Product Does not Exist.')
     else:
         branch = Branch.objects.all()
-        products = Product.objects.all()
+        products = Product.objects.filter(is_deleted=False)
         context={
             'products':products,
             'branch':branch,
         }
-        return render(request, 'products/products.html', context )
+        return render(request, 'products/products.html', context, {'message': messages.get_messages(request)} )
 
 
 @login_required
@@ -206,14 +217,16 @@ def product_update(request, product_id):
 @user_passes_test(lambda user: user.has_perm('main.view_product_list'))
 def product_delete(request, product_id):
     product = Product.objects.get(pk=product_id)
-    product.delete()
+    product.delete()  # Use the custom delete method
     messages.success(request, 'Product deleted successfully!')
-    return render(request, 'products/products.html')
+    return redirect('products:product_list')
 
 
-
-
-
-
-
-
+@login_required
+@user_passes_test(lambda user: user.has_perm('main.restore_product'))
+@user_passes_test(lambda user: user.has_perm('main.view_product_list'))
+def product_restore(request, product_id):
+    product = Product.objects.get(pk=product_id)
+    product.restore()  # Use the custom restore method
+    messages.success(request, 'Product restored successfully!')
+    return redirect('products:product_list')

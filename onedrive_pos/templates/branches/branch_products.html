@@ -5,8 +5,8 @@
 
 <!-- pagetiltle -->
 <div class="pagetitle">
-    <h1>Products in {{ branch.name }} Branch </h1>
-    <h2>Has {{branch_products_count }} Products</h1>
+    <h1 class=" h5 text-md font-weight-bold text-primary text-uppercase mb-1">Products in {{ branch.name }} Branch </h1>
+    <h2 class=" h5 text-md font-weight-bold text-primary text-uppercase mb-1">Has <span class="badge badge-success">{{branch_products_count }}</span>  Products</h1>
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'auth_pos:admin_dashboard' %}">Home</a></li>
@@ -27,43 +27,15 @@
 
     .pagetitle{
 
+        margin-top: 30px;
         margin-right: 20px;
         margin-left: 20px;
         
 
 
     }
-    #stark2{
+   
 
-        margin-bottom: 30px;
-        border-radius: 30px;
-        margin-left: 20px;
-        margin-right: 20px;
-        
-
-
-    }
-
-    #stark{
-
-        justify-content: end;
-        margin-left: 400px;
-        border-color: red;
-        border-style: solid;
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
-    
-    }
-    #addproductBtn{
-
-        justify-content: end;
-        background-color: #288017;
-        margin-right: 30px;
-        border-radius: 10px;
-        
-
-
-    }
     #productlist{
 
         size: 50%;
@@ -80,6 +52,24 @@
 
 
     }
+    #tablehead{
+
+      background-color: rgb(206, 96, 114);
+      color: white
+    }
+    #navbarSearch{
+      margin-top: 5px;
+      margin-left: 2px
+    }
+    .nav-item{
+      margin-right: 5px;
+    }
+    #pqty{
+
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    
     
         
 
@@ -123,7 +113,7 @@
                     <div class="card-body ">
                         <div class="table-responsive table-borderless table-hover table-responsive-sm table-responsive-md table-responsive-lg table-striped">
                           <table class="table " id="dataTable" width="100%" cellspacing="1">
-                            <thead>
+                            <thead id="tablehead">
                               <tr>
                                 <th>ID</th>
                                 <th>Name</th>
@@ -132,7 +122,7 @@
                                 <th>Car Model</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
-                                <th>branch</th>
+                                
                       
                               </tr>
                             </thead>
@@ -145,19 +135,22 @@
                                 <td>{{ product.description }}</td>
                                 <td>{{ product.make }}</td>
                                 <td>{{ product.model }}</td>
-                                <td>{{ product.quantity }}</td>
-                                <td>{{ product.price }}</td>
-                                <td ><span class="badge bg-success">{{ product.branch.name }}</span></td>
-                                <td>
-                                 
+                                <td  id="pqty" {% if product.quantity < 3 %}>
+                                  <span class="badge badge-danger">Low Stock</span>
+                                  {% else %}
+                                      <span class="badge badge-success">In Stock</span>
+                                  {% endif %}
+                                  <span id="productqty">{{product.quantity}}</span>
                                 </td>
+                                <td>{{ product.price }}</td>
                               </tr>
                               {% endfor %}
                             </tbody>
                             {% else %}
                             <tbody>
                               <tr>
-                                <td colspan="9">{{branch.name}} has no products.</td>
+                                <td colspan="9" class="text-center">No Products found !.
+                                   <b>Go to Product management to add products  to this branch</b></td>
                               </tr>
                           </table>
                           {% endif %}

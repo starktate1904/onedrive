@@ -38,12 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'auth_pos',
     'products',
     'branches',
-    'sale',
     'staff',
-    'user_profile'
+    'user_profile',
+    'pos',
+
     
     
 ]
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'onedrive_pos.urls'
@@ -130,6 +133,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Update with your static files directory path
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Update with your production static files directory path
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 

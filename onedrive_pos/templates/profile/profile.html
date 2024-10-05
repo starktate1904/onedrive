@@ -1,5 +1,6 @@
 {% extends 'dashboard/admin_dashboard.html' %}
 {% block content %}
+{% load static %}
 
  <style>
 
@@ -7,11 +8,12 @@
     margin-left: 20px;
     margin-right: 10px;
     border-radius: 30px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
   }
   #tabCard{
     margin-right: 10px;
     margin-left: 20px;
+    margin-bottom: 20px;
   }
   .breadcrumb{
 
@@ -20,21 +22,157 @@
 }
 
 .pagetitle{
-
+    margin-top: 20px;
     margin-right: 20px;
     margin-left: 20px;
     
 
 
+}input[type="text"] {
+  margin-bottom: 10px;
+  width: auto;
+  margin-right: auto;
+  margin-top: auto;
+
+  
+  /* Styles for text input elements */
 }
-    
+
+input[type="number"] {
+margin-bottom: 10px;
+margin-right: auto;
+margin-top: auto;
+
+
+/* Styles for text input elements */
+}
+input[type="password"] {
+  margin-bottom: 10px;
+  margin-right: auto;
+  margin-top: auto;
+  width: auto;
+  
+  
+  /* Styles for text input elements */
+}
+input[type="email"] {
+  margin-bottom: 10px;
+  margin-right: auto;
+  margin-top: auto;
+  width: auto;
+  
+  
+  /* Styles for text input elements */
+}
+input[type="option"] {
+margin-bottom: 10px;
+margin-left: auto;
+margin-right: auto;
+margin-top: auto;
+border-radius: 10px;
+
+/* Styles for text input elements */
+}
+input[type="file"] {
+
+background-color:rgb(206, 96, 114);
+margin-bottom: 10px;
+margin-left: auto;
+margin-right: auto;
+margin-top: auto;
+border-radius: 10px;
+width: 220px;
+
+
+
+/* Styles for text input elements */
+}
+
+
+.form-control {
+border: 0;
+border-bottom: 1px solid rgb(206, 96, 114);
+border-radius: 0;
+padding: 8px;
+}
+.form-control:focus {
+  box-shadow: none;
+
+}
+
+.floating-input {
+padding-top: 10px;
+padding-bottom: 10px;
+}
+
+.floating-input:focus, .floating-input:not(:placeholder-shown) {
+padding-top: 0;
+padding-bottom: 0;
+}
+
+.floating-input:not(:placeholder-shown) + label {
+position: absolute;
+top: -12px;
+left: 0;
+font-size: 80%;
+color: #777;
+}
+
+label {
+font-weight: bold;
+color: #333;
+}
+.custom-select {
+/* Your styles here */
+border: 1px solid #ccc;
+padding: 5px;
+border-radius: 10px;
+}
+.custom-select:focus {
+border: 0;
+border-bottom: 1px solid rgb(206, 96, 114);
+border-radius: 0;
+padding: 8px;
+
+}
+.btn{
+margin-top: 5px;
+
+
+}
+#profile-edit{
+  margin-bottom: 20px;
+
+}
+.profile-picture {
+ 
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  display: block;
+}
+#profiletab{
+  margin-bottom: 20px;
+ 
+}
+.nav-item{
+  margin: auto;
+}
+
+
+
 
 
 
 
  </style>
+
+
+
 <div class="pagetitle">
-  <h1>Profile</h1>
+  <h1  class=" h5 text-md font-weight-bold text-primary text-uppercase mb-1">Profile</h1>
   <nav>
     <ol class="breadcrumb">
       <li class="breadcrumb-item active">{{user.username}}'s Profile</li>
@@ -42,22 +180,33 @@
   </nav>
 </div><!-- End Page Title -->
 
+
+
+
 <section class="section profile">
   <div class="row">
     <div class="col-xl-4">
 
-      <div class="card" id="nameCard">
+
+
+      <div class="card border-left-danger shadow  py-2" id="nameCard">
+        {% if user_profile.profile_pic %}
+        <div style="text-align: center;">
+        <img src="{{ user_profile.profile_pic.url }}" alt="Profile" class="profile-picture">
+        {% else %}
+        <img src="{% static 'img\undraw_profile_1.svg' %}" alt="Default Profile Picture" class="profile-picture">
+        {% endif %}
+      </div>
         <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-          <h2>{{ user.username }}</h2>
-          <h3>{{user.role}}</h3>
+          <h2  class=" h4 text font-weight-bold text-primary text-uppercase mb-1">{{ user.first_name }}</h2><h2 class=" h4 text font-weight-bold text-primary text-uppercase mb-1">{{user.last_name}}</h2>
+          <h3  class=" h5 text-xs font-weight-bold text-success text-uppercase mb-1">{{user.role}}</h3>
         </div>
       </div>
 
     </div>
 
-    <div class="col-xl-8">
-
-      <div class="card" id="tabCard">
+    <div class="col-xl-8" id="profiletab">
+      <div class="card border-left-danger shadow  py-2" id="tabCard">
         <div class="card-body pt-3">
           <!-- Bordered Tabs -->
           <ul class="nav nav-tabs nav-tabs-bordered">
@@ -80,10 +229,10 @@
 
             <div class="tab-pane fade show active profile-overview" id="profile-overview">
 
-              <h5 class="card-title">Profile Details</h5>
+              <h5 class=" h6 text font-weight-bold text-success text-uppercase mb-1">Profile Details</h5>
 
               <div class="row">
-                <div class="col-lg-3 col-md-4 label ">Name</div>
+                <div class="col-lg-3 col-md-4 label text-bg-dark ">Name</div>
                 <div class="col-lg-9 col-md-8">{{user.first_name}}</div>
               </div>
 
@@ -108,8 +257,23 @@
             <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
               <!-- Profile Edit Form -->
-              <form action="{% url 'profile:update_user_details' user.pk  %}" method="POST">
-              
+              <form action="{% url 'profile:update_user_details' user.pk  %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mb-3">
+                  <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                  <div class="col-md-8 col-lg-9">
+                    {% if user_profile.profile_pic %}
+                    <div style="text-align: center ;">
+                    <img src="{{ user_profile.profile_pic.url }}" alt="Profile" class="profile-picture">
+                    {% else %}
+                      <img src="{% static 'images/default_profile_pic.jpg' %}" alt="Default Profile Picture" class="profile-picture">
+                    {% endif %}
+                    <div class="pt-2">
+                      <input type="file" name="profile_pic" id="profileImage" class="btn btn-primary btn-sm ">
+                    </div>
+                  </div>
+                  </div>
+                </div>
                 
                 <div class="row mb-3">
                   <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Username</label>
@@ -125,8 +289,6 @@
                   </div>
                 </div>
 
-
-
                 <div class="row mb-3">
                   <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
                   <div class="col-md-8 col-lg-9">
@@ -134,15 +296,12 @@
                   </div>
                 </div>
 
-
                 <div class="row mb-3">
                   <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                   <div class="col-md-8 col-lg-9">
                     <input name="email" type="email" class="form-control" id="Email" value="{{user.email}}">
                   </div>
                 </div>
-              
-
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
@@ -181,7 +340,6 @@
 
         </div>
       </div>
-
     </div>
   </div>
 </section>
