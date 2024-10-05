@@ -48,18 +48,12 @@
     </div>
 </div>
 
-
-
-
 <!-- Add this to your HTML page -->
 <div id="message-modal" style="display: none;">
     <div class="modal-content">
         <span id="message-text"></span>
     </div>
 </div>
-
-
-
 
 <!-- Modal -->
 <div class="modal fade" id="saleCompletedModal" tabindex="-1" role="dialog" aria-labelledby="saleCompletedModalLabel" aria-hidden="true">
@@ -79,12 +73,32 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="show-receipt-modal">View Receipt</button>
         </div>
       </div>
     </div>
 </div>
 
+<!-- Receipt Modal -->
+<div class="modal fade" id="receiptModal" tabindex="-1" role="dialog" aria-labelledby="receiptModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-scrollable " role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="receiptModalLabel">Receipt</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="receipt-body">
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" id="print-receipt-btn">Print</button>
+          <button type="button" class="btn btn-info" id="save-receipt-btn">Save</button>
+        </div>
+      </div>
+    </div>
+</div>
 
 <style>
     /* Add this to your CSS file */
@@ -106,8 +120,9 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    width: 300px;
+    width:fit-content;
     text-align: center;
+    height: fit-content;
 }
 
 #message-text {
@@ -119,6 +134,7 @@
     .modal-content {
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        height: max-content;
       }
       
       .modal-header {
@@ -147,15 +163,30 @@
       .text-success {
         color: #4CAF50;
       }
+      
+      #receiptModal .modal-footer {
+        display: flex;
+        justify-content: space-between;
+      }
 
+      #receiptModal .modal-footer button {
+        margin-right: 10px;
+      }
 
+      #receiptModal .modal-footer #print-receipt-btn {
+        background-color: #4CAF50;
+        color: #fff;
+      }
 
-
+      #receiptModal .modal-footer #save-receipt-btn {
+        background-color: #8BC34A;
+        color: #fff;
+      }
 </style>
 
-
-
 <script>
+var receiptHtml;
+
 $(document).ready(function() {
     // Product search functionality
     $('#product-search').on('input', function() {
@@ -207,30 +238,7 @@ $(document).ready(function() {
         });
     });
 
-
     // Update total when quantity changes
-    $(document).on('input', '.quantity-input', function() {
-        var quantity = $(this).val();
-        var price = $(this).data('price');
-        var total = quantity * price;
-        $(this).closest('tr').find('td:nth-child(4)').text(total);
-        updateTotal();
-    });
-    
-    // Update total when quantity changes
-    function updateTotal() {
-        var total = 0;
-        $('#sale-table-body tr').each(function() {
-            total += parseFloat($(this).find('td:nth-child(4)').text());
-        });
-        $('#total').text(total);
-    }
-
-
-
-
-
-   // Update total when quantity changes
     $(document).on('input', '.quantity-input', function() {
         var quantity = $(this).val();
         var price = $(this).data('price');
@@ -247,9 +255,7 @@ $(document).ready(function() {
         });
         $('#total').text(total);
     }
-   
-   
-   
+
     // Complete sale 
     $(document).on('click', '.complete-sale-btn', function() {
         var saleId = $('#sale-id').val();
@@ -268,6 +274,8 @@ $(document).ready(function() {
                 // Update the sale table and total amount
                 $('#sale-table-body').html('');
                 $('#total').text ('0.00');
+                // Store the receipt HTML in a variable
+                receiptHtml = data.receipt_html;
                 // Show the sale completed modal
                 $('#saleCompletedModal').modal('show');
                 // You can also redirect the user to the sale list page
@@ -296,6 +304,33 @@ $(document).ready(function() {
                 $('#total').text(data.total_amount);
             }
         });
+    });
+
+    // Show receipt modal after sale completed modal
+    $('#show-receipt-modal').on('click', function() {
+        $('#saleCompletedModal').modal('hide');
+        $('#receiptModal').modal('show');
+        // Use the stored receipt HTML
+        $('#receipt-body').html(receiptHtml);
+    });
+
+    // Print receipt button
+    $('#print-receipt-btn').on('click', function() {
+        var receiptHtml = $('#receipt-body').html();
+        var printWindow = window.open('', '_blank');
+        printWindow.document.write(receiptHtml);
+        printWindow.print();
+    });
+
+    // Save receipt button
+    $('#save-receipt-btn').on('click', function() {
+        var receiptHtml = $('#receipt-body').html();
+        var blob = new Blob([receiptHtml], {type: 'text/html'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'receipt.html';
+        a.click();
     });
 });
 </script>

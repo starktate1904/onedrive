@@ -10,8 +10,17 @@
     <title> Login</title>
    {% include 'scripts/links.html' %}
    {% include 'scripts/scripts.html' %}
+   {% load static %}
 
 </head>
+<style>
+    #logo{
+        margin-left:auto;
+       
+    }
+
+
+</style>
 
 <body class="bg-white">
     <div class="container">
@@ -26,6 +35,7 @@
                         <!-- Nested Row within Card Body -->
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block bg-login-image">
+                                <img src="{% static 'img/logo.png' %}" alt="" id="logo">
                                
                             </div>
                             <div class="col-lg-6">

@@ -2,9 +2,14 @@
 
 {% load static %}
 
+ 
  <!-- Page Heading -->
- <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-black-900">{{ greeting}} <b>{{ user.username }}</b></h1>
+<div class="d-sm-flex align-items-center justify-content-between mb-4" id="pageheading">
+    <div class="d-flex align-items-center">
+        <h1 class="h3 mb-0 text-black-900 ml-3  text-uppercase" id="greeting">{{ greeting}} <b>{{ user.username }}</b></h1>
+        <img src="{{ user_profile.profile_pic.url }}" alt="Profile Picture" class="profile-picture">
+        <p class="h3 mb-0 text-black-900 ml-3  text-uppercase " id="today">Today is <b>{{ today }}</b></p>
+    </div>  
 </div>
 
 
@@ -112,129 +117,6 @@
 
 
 </div>
-
-
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Sales App</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#" id="sales-list-link">Sales List <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" id="add-sale-link">Add Sale</a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div class="container">
-    <div id="sales-list">
-        <h1>Sales List</h1>
-        <ul id="sales-list-ul">
-            <!-- Sales list will be populated here -->
-        </ul>
-    </div>
-    <div id="add-sale" style="display: none;">
-        <h1>Add Sale</h1>
-        <form id="sale-form">
-            <div class="form-group">
-                <label for="product">Product:</label>
-                <select id="product" name="product">
-                    <!-- Product options will be populated here -->
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="quantity">Quantity:</label>
-                <input type="number" id="quantity" name="quantity">
-            </div>
-            <button type="submit" id="add-sale-btn">Add Sale</button>
-        </form>
-    </div>
-</div>
-<script>
-    $(document).ready(function() {
-        // Load sales list
-        loadSalesList();
-        // Load product options
-        loadProductOptions();
-        // Handle sales list link click
-        $('#sales-list-link').click(function() {
-            $('#sales-list').show();
-            $('#add-sale').hide();
-        });
-        // Handle add sale link click
-        $('#add-sale-link').click(function() {
-            $('#sales-list').hide();
-            $('#add-sale').show();
-        });
-        // Handle add sale form submission
-        $('#sale-form').submit(function(e) {
-            e.preventDefault();
-            addSale();
-        });
-    });
-    // Load sales list
-    function loadSalesList() {
-        $.ajax({
-            type: 'GET',
-            url: '/sales/',
-            success: function(data) {
-                $('#sales-list-ul').empty();
-                $.each(data, function(index, sale) {
-                    $('#sales-list-ul').append('<li>' + sale.product.name + ' - ' + sale.quantity + ' - ' + sale.total + '</li>');
-                });
-            }
-        });
-    }
-    // Load product options
-    function loadProductOptions() {
-        $.ajax({
-            type: 'GET',
-            url: '/products/',
-            success: function(data) {
-                $('#product').empty();
-                $.each(data, function(index, product) {
-                    $('#product').append('<option value="' + (product.name) + '">' + product.name + '</option>');
-                });
-            }
-        });
-    }
-    // Add sale
-    function addSale() {
-        $.ajax({
-            type: 'POST',
-            url: '/sales/',
-            data: {
-                product: $('#product').val(),
-                quantity: $('#quantity').val()
-            },
-            success: function(data) {
-                alert('Sale added successfully!');
-                loadSalesList();
-                $('#sale-form')[0].reset();
-            }
-        });
-    }
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

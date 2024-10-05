@@ -1,15 +1,17 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Sale, SaleItem
 from products.models import Product
 from branches.models import Branch
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.db import transaction
-from django.http import HttpResponse
 from django.db.models import F
-
+from xhtml2pdf import pisa
+from django.http import HttpResponse
+from django.template.loader import get_template
+import datetime
+from datetime import date
 
 
 
@@ -18,12 +20,10 @@ def sale_list(request):
     sales = Sale.objects.filter(branch=request.user.employee.branch)
     return render(request, 'pos/sale_list.html', {'sales': sales})
 
-
 @login_required
 def view_sale(request, sale_id):
     sale = Sale.objects.get(id=sale_id)
     return render(request, 'pos/view_sale.html', {'sale': sale})
-
 
 @login_required
 def create_sale(request):
@@ -57,8 +57,6 @@ def create_sale(request):
 
         return render(request, 'pos/create_sale.html', {'products': products, 'sale_items': sale_items,'sale':sale, 'sale_id': sale.id, 'total_amount': total_amount})
 
-
-
 @login_required
 def search_products(request):
     search_term = request.GET.get('search_term', '')
@@ -77,10 +75,10 @@ def search_products(request):
         })
     return JsonResponse(results, safe=False)
 
-
-
 @login_required
 def complete_sale(request):
+    today = date.today()
+
     if request.method == 'POST':
         sale_id = request.POST.get('sale_id')
         amount_paid = float(request.POST.get('amount_paid'))
@@ -105,10 +103,13 @@ def complete_sale(request):
         # Create a new sale
         new_sale = Sale.objects.create(branch=request.user.employee.branch, total_amount=0, cashier_id=request.user.id)
 
-        return JsonResponse({'message': 'Sale completed successfully', 'change': change, 'new_sale_id': new_sale.id})
+        # Render the receipt as HTML
+        sale_items = SaleItem.objects.filter(sale=sale)
+        receipt_html = render_to_string('pos/receipt.html', {'sale': sale, 'sale_items': sale_items, 'amount_paid': amount_paid, 'change': change,'today':today})
+
+        return JsonResponse({'message': 'Sale completed successfully', 'change': change, 'new_sale_id': new_sale.id, 'receipt_html': receipt_html})
     else:
         return HttpResponse('Invalid request method')
-
 
 
 @login_required
@@ -131,36 +132,51 @@ def add_product_to_sale(request):
             sale_item.quantity += quantity
             sale_item.save()
         else:
-            SaleItem.objects.create(sale=sale, product=product, quantity=quantity, price=product.price)
+            SaleItem.objects.create(sale=sale, product =product, quantity=quantity, price=product.price)
 
         # Recalculate the total amount
         sale.total_amount = sum(item.quantity * item.price for item in SaleItem.objects.filter(sale=sale))
         sale.save()
 
         # Render the updated sale table and total amount as HTML
-        sale_items = SaleItem.objects.filter(sale=sale)
-        sale_table_html = render_to_string('pos/sale_table.html', {'sale_items': sale_items})
+        sale_items = SaleItem.objects.filter (sale=sale)
+        sale_table_html = render_to_string('pos/sale_table.html', {'sale': sale, 'sale_items': sale_items})
 
         return JsonResponse({'sale_table': sale_table_html, 'total_amount': sale.total_amount})
     else:
         return HttpResponse('Invalid request method')
-
 
 @login_required
 def remove_product_from_sale(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
         sale_id = request.POST.get('sale_id')
-        sale_item = SaleItem.objects.get(sale_id=sale_id, product_id=product_id)
-        sale_item.delete()
 
-        # Recalculate the total amount
-        sale = Sale.objects.get(id=sale_id)
-        sale.total_amount = sum(item.quantity * item.price for item in SaleItem.objects.filter(sale=sale))
-        sale.save()
+        try:
+            sale = Sale.objects.get(id=sale_id)
+        except Sale.DoesNotExist:
+            return JsonResponse({'error': 'Sale does not exist'})
 
-        # Render the updated sale table and total amount as HTML
-        sale_items = SaleItem.objects.filter(sale=sale)
-        sale_table_html = render_to_string('pos/sale_table.html', {'sale_items': sale_items})
+        product = Product.objects.get(id=product_id)
 
-        return JsonResponse({'sale_table': sale_table_html, 'total_amount': sale.total_amount})
+        # Check if product is in the sale
+        if SaleItem.objects.filter(sale=sale, product=product).exists():
+            sale_item = SaleItem.objects.get(sale=sale, product=product)
+            sale_item.delete()
+
+            # Recalculate the total amount
+            sale.total_amount = sum(item.quantity * item.price for item in SaleItem.objects.filter(sale=sale))
+            sale.save()
+
+            # Render the updated sale table and total amount as HTML
+            sale_items = SaleItem.objects.filter(sale=sale)
+            sale_table_html = render_to_string('pos/sale_table.html', {'sale': sale, 'sale_items': sale_items})
+
+            return JsonResponse({'sale_table': sale_table_html, 'total_amount': sale.total_amount})
+        else:
+            return JsonResponse({'error': 'Product is not in the sale'})
+    else:
+        return HttpResponse('Invalid request method')
+  
+
+       
