@@ -17,10 +17,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from datetime import timedelta
 
-
-
-
-# soft deletign a product after it reaches 0 on quantity
+# Soft deleting a product after it reaches 0 on quantity
 @user_passes_test(lambda user: user.has_perm('main.view_product_list'))
 @receiver(post_save, sender=Product)
 def soft_delete_product(sender, instance, **kwargs):
@@ -28,28 +25,30 @@ def soft_delete_product(sender, instance, **kwargs):
         instance.is_deleted = True
         instance.save()
 
-
-
-# carpart / product management CRUD views
+# Carpart / product management CRUD views
 @login_required
 @user_passes_test(lambda user: user.has_perm('main.view_product_list'))
 def product_list(request):
+    active_nav_item = 'products'
     branch = Branch.objects.all()
+    categories = Category.objects.all()
     products = Product.objects.filter(is_deleted=False)
 
     # Get the search query from the GET parameters
     search_query = request.GET.get('search')
+    category_query = request.GET.get('category')
 
     # Filter products based on the search query
     if search_query:
         products = products.filter(
             Q(name__icontains=search_query) |
-            Q(description__icontains=search_query) 
- |
             Q(make__icontains=search_query) |
             Q(model__icontains=search_query) |
+            Q(description__icontains=search_query) |
             Q(price__icontains=search_query)
         )
+    if category_query:
+        products = products.filter(category_id=category_query)
 
     # Paginate the filtered products
     page_size = 10
@@ -61,15 +60,20 @@ def product_list(request):
     except PageNotAnInteger:
         products = paginator.page(1)
     except EmptyPage:
-        products = paginator.page(paginator.num_pages) 
+        products = paginator.page(paginator.num_pages)
+    
+    
 
 
     context = {
-        "active_icon": "products",
+        'active_nav_item':active_nav_item,
         'products': products,
-                'paginator': paginator, 
-                'search_query': search_query,
-                'branch':branch}
+        'paginator': paginator,
+        'search_query': search_query,
+        'branch': branch,
+        'categories': categories,
+        'category_query': category_query
+    }
     return render(request, 'products/products.html', context)
 
 
@@ -79,9 +83,11 @@ def product_list(request):
 @user_passes_test(lambda user: user.has_perm('main.add_product'))
 def upload_products_csv(request):
     products = Product.objects.filter(is_deleted=False)
+    categories = Category.objects.all()
 
     context = {
         'products': products,
+        'categories': categories
     }
 
     if request.method == 'POST':
@@ -99,10 +105,11 @@ def upload_products_csv(request):
                     price = row['price']
                     quantity = int(row['quantity'])  # Convert quantity to integer
                     branch_id = int(row['branch_id'])  # Convert branch ID to integer
-                 
+                    category_id = int(row['category_id'])
 
                     # Get the branch object based on ID
                     branch = Branch.objects.get(pk=branch_id)  # Use pk for primary key
+                    category = Category.objects.get(id=category_id)
 
                     product = Product(
                         name=name,
@@ -112,7 +119,7 @@ def upload_products_csv(request):
                         price=price,
                         quantity=quantity,
                         branch=branch,
-                      
+                        category=category,
                     )
                     product.save()
                 except (KeyError, ValueError) as e:  # Handle missing or invalid data
@@ -131,6 +138,8 @@ def upload_products_csv(request):
 
 
 
+
+
 @login_required
 @user_passes_test(lambda user: user.has_perm('main.add_product'))
 @user_passes_test(lambda user: user.has_perm('main.view_branch_list'))
@@ -143,28 +152,27 @@ def product_create(request):
         price = request.POST.get('price')
         quantity = request.POST.get('quantity')
         branch_id = request.POST.get('branch')
-       
+        category_id = request.POST.get('category')
 
         # Validate input
-        if not make or not name  or not model or not description or not price or not quantity or not branch_id :
+        if not make or not name or not model or not description or not price or not quantity or not branch_id or not category_id:
             messages.error(request, 'Please fill in all fields')
             return render(request, 'products/products.html')
-         # Get the branch object
-        branch = Branch.objects.get(id=branch_id)
+
+        # Get the branch object based on ID
+        branch = Branch.objects.get(pk=branch_id)  # Use pk for primary key
+
+        # Get the category object based on ID
+        category = Category.objects.get(pk=category_id)  # Use pk for primary key
+
         # Create the product object
-        Product.objects.create(name=name, make=make, model=model, description=description, price=price, branch=branch, quantity=quantity,)
+        Product.objects.create(name=name, make=make, model=model, description=description, price=price, branch=branch, quantity=quantity, category=category)
         messages.success(request, 'Product created successfully!')
-        context={
-            'message': messages.get_messages(request)
-        }
         return redirect('products:product_list')  # Redirect to branch list after success
+
     branch = Branch.objects.all()
-      
-    return render(request, 'products/products.html',{'branch': branch},{'message': messages.get_messages(request)})
-
-
-
-
+    categories = Category.objects.all()
+    return render(request, 'products/products.html', {'branch': branch, 'categories': categories})
 
 
 @login_required
@@ -173,7 +181,6 @@ def product_create(request):
 @user_passes_test(lambda user: user.has_perm('main.update_product'))
 def product_update(request, product_id):
     product = Product.objects.get(pk=product_id)
-    
     if request.method == 'POST':
         name = request.POST.get('name')
         make = request.POST.get('make')
@@ -182,21 +189,21 @@ def product_update(request, product_id):
         price = request.POST.get('price')
         quantity = request.POST.get('quantity')
         branch_id = request.POST.get('branch')
-       
-        
+        category_id = request.POST.get('category')
+
         # Get the branch object
         branch = Branch.objects.get(id=branch_id)
-
+        category = Category.objects.get(id=category_id)
 
         try:
-
-            product.name = name    # update the product name
-            product.make = make    #update the product make 
+            product.name = name  # update the product name
+            product.make = make  # update the product make
             product.model = model  # Update the products model
             product.description = description  # Update the products descriptiom
-            product.price= price  # Update the prodct's price
-            product.quantity= quantity
-            product.branch=branch  # Update the product's branch
+            product.price = price  # Update the prodct's price
+            product.quantity = quantity
+            product.branch = branch  # Update the product's branch
+            product.category = category  # Update the product's category
             product.save()
             messages.success(request, 'Product updated successfully!')
             return redirect('products:product_list')
@@ -204,12 +211,16 @@ def product_update(request, product_id):
             messages.error(request, 'Product Does not Exist.')
     else:
         branch = Branch.objects.all()
+        categories = Category.objects.all()
         products = Product.objects.filter(is_deleted=False)
-        context={
-            'products':products,
-            'branch':branch,
+        context = {
+            'products': products,
+            'branch': branch,
+            'categories': categories
         }
-        return render(request, 'products/products.html', context, {'message': messages.get_messages(request)} )
+        return render(request, 'products/products.html', context)
+
+
 
 
 @login_required
@@ -227,6 +238,7 @@ def product_delete(request, product_id):
 @user_passes_test(lambda user: user.has_perm('main.view_product_list'))
 def product_restore(request, product_id):
     product = Product.objects.get(pk=product_id)
-    product.restore()  # Use the custom restore method
+    product.restore()
     messages.success(request, 'Product restored successfully!')
     return redirect('products:product_list')
+  

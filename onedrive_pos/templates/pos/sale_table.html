@@ -1,24 +1,33 @@
 
-
-<table class="table">
-    <thead>
+<table class="table table-striped table-bordered  table-responsive  ">
+    <thead id="tHead">
         <tr>
             <th>Product</th>
             <th>Quantity</th>
             <th>Price</th>
             <th>Total</th>
+            <th>Catergory</th>
             <th></th>
+            
+
         </tr>
     </thead>
-    <tbody>
+    <tbody  id="sale-table-body">
         {% for item in sale_items %}
         <tr>
             <td>{{ item.product.name }}</td>
-            <td><input type="number" name="quantity_{{ item.product.id }}" id="quantity_{{ item.product.id }}" value="{{ item.quantity }}"></td>
-            <td>{{ item.product.price }}</td>
-            <td><span id="total_{{ item.product.id }}">{{ item.total }}</span></td>
-            <td><button type="button" class="btn btn-danger remove-from-sale" data-product-id="{{ item.product.id }}">Remove</button></td>
+            <td><input type="number" name="quantity_{{ item.product.id }}" id="quantity_{{ item.product.id }}" value="{{ item.quantity }}" min="1" max="{{item.product.quantity}}" class="quantity-input" data-price="{{ item.product.price }}" disabled></td>
+            <td >{{ item.product.price }}</td>
+            <td><span id="total_{{ item.product.id }}" >{{ item.total }}</span></td>
+            <td>{{ item.product.category }}</td>
+            <td><a  class="btn btn-danger remove-from-sale"  data-product-id="{{ item.product.id }}"><i class="fas fa-trash"></i></a>
+            </td>
+            
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+
+
+

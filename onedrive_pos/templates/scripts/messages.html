@@ -1,30 +1,175 @@
-{% load static %}
-
-<!-- Messages Modal -->
-<div class="modal fade" id="message-modal" tabindex="-1" aria-labelledby="message-modal-label" aria-hidden="true">
-  <div class="modal-dialog  modal-sm">
-    <div class="modal-content  border-left-danger shadow  py-2">
-      <div class="modal-header  bg-primary">
-        <h5 class="modal-title" id="message-modal-label">Messages</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal -->
+<div class="modal fade" id="message-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center" id="exampleModalLabel">Message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <div class="modal-body">
-        {% for message in messages %}
-          <p class="mb-0">{{ message }}</p>
-        {% endfor %}
+      <div class="modal-body" id="message-body">
+        {% if messages %}
+          {% for message in messages %}
+            {% if message.tags == 'success' %}
+              <div class="alert alert-success">
+                <i class="fas fa-check-circle fa-5x text-success" aria-hidden="true"></i>
+                {{ message }}
+              </div>
+            {% elif message.tags == 'error' %}
+              <div class="alert alert-danger">
+                <i class="fa fa-times-circle-o" aria-hidden="true"></i>
+                {{ message }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <p>No messages to display.</p>
+        {% endif %}
+      </div>
+      <div class="modal-footer">
+     
       </div>
     </div>
   </div>
 </div>
 
-<!-- JavaScript to show and hide the modal -->
+<!-- JavaScript to show the modal -->
 <script>
-  var messageModal = new bootstrap.Modal(document.getElementById('message-modal'));
-  messageModal.show();
-
-  setTimeout(function() {
-    messageModal.hide();
-  }, 3000);
+  $(document).ready(function() {
+    // Show the loader initially
+    $('#loader').show();
+  
+    // Simulate the loading process (replace with your actual loading logic)
+    setTimeout(function() {
+      // Hide the loader
+      $('#loader').hide();
+  
+      // Check if there are any messages
+      if ($('#message-body').find('.alert').length > 0) {
+        // Show the modal
+        $('#message-modal').modal('show');
+  
+        // Hide the modal after 3 seconds
+        setTimeout(function() {
+          $('#message-modal').modal('hide');
+        }, 3000);
+      }
+    }, 2000); // adjust the timeout to match your loading time
+  });
+ 
 </script>
 
+<style>
+ /* Modal styles */
+.modal {
+  text-align: center;
+  padding: 0 !important;
+}
 
+.modal .modal-dialog {
+  margin: 100px auto;
+  width: 400px;
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.modal .modal-content {
+  background-color: #fff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal .modal-header {
+  background-color: #333;
+  color: #fff;
+  border-bottom: none;
+  padding: 15px;
+  text-align: center;
+  border-radius: 10px 10px 0 0;
+}
+
+.modal .modal-header .modal-title {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.modal .modal-body {
+  padding: 20px;
+}
+
+.modal .modal-body .alert {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal .modal-body .alert-success {
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+  color: #3e8e41;
+}
+
+.modal .modal-body .alert-danger {
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  color: #a94442;
+}
+
+.modal .modal-body .alert i {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.modal .modal-footer {
+  background-color: #333;
+  color: #fff;
+  border-top: none;
+  padding: 10px;
+  text-align: center;
+  border-radius: 0 0 10px 10px;
+}
+
+.modal .modal-footer .btn {
+  background-color: #337ab7;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.modal .modal-footer .btn:hover {
+  background-color: #23527c;
+}
+
+/* Animation styles */
+.modal.fade .modal-dialog {
+  transform: scale(0.5);
+  opacity: 0;
+}
+
+.modal.fade.show .modal-dialog {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal.fade.show .modal-dialog {
+  animation: bounceIn 0.5s;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+</style>

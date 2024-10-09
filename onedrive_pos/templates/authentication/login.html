@@ -13,9 +13,15 @@
    {% load static %}
 
 </head>
+{% include 'scripts/main_loader.html' %}
+{% include 'scripts/messages.html' %}
+
 <style>
     #logo{
-        margin-left:auto;
+        margin-top: 100px;
+        margin-left:300px;
+        width: 100px;
+        height :100px;
        
     }
 
@@ -48,13 +54,13 @@
 
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user" id="userName"
-                                                placeholder="username" name="username">
+                                                placeholder="username" name="username" required>
                                         </div>
         
                                         
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" name="password"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="exampleInputPassword" placeholder="Password" required>
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
@@ -63,7 +69,7 @@
                                                     Me</label>
                                             </div>
                                         </div>
-                                        <button  class="btn btn-primary btn-user btn-block" type="submit" >
+                                        <button  class="btn btn-danger btn-user btn-block" type="submit" >
                                             Login
                                         </button>
                                        

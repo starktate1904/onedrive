@@ -60,7 +60,8 @@
       "default",
       {
         "ignore": [
-          "field-sizing"
+          "field-sizing",
+          "-webkit-mask"
         ]
       }
     ]

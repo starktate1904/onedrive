@@ -116,6 +116,7 @@
                             <thead id="tablehead">
                               <tr>
                                 <th>ID</th>
+                                <th>Category</th>
                                 <th>Name</th>
                                 <th>Description</th>
                                 <th>Car Make</th>
@@ -131,6 +132,7 @@
                               {% for product in products %}
                               <tr>
                                 <td>{{ product.id }}</td>
+                                <td>{{ product.category}}</td>
                                 <td>{{ product.name }}</td>
                                 <td>{{ product.description }}</td>
                                 <td>{{ product.make }}</td>

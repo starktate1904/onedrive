@@ -1,0 +1,66 @@
+
+{% extends 'dashboard/admin_dashboard.html' %}
+
+{% block content %}
+    <!-- pagetitle -->
+    <div class="pagetitle">
+        <h1 class="h5 text-md font-weight-bold text-primary text-uppercase mb-1">Sales</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'auth_pos:admin_dashboard' %}">Home</a></li>
+            <li class="breadcrumb-item active"><a href="{% url 'pos:sales' %}">All Sales</a></li>
+          </ol>
+        </nav>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section profile">
+        <div class="row">
+  <form method="get">
+    {{ filter_form.as_p }}
+    <button type="submit">Filter</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Product</th>
+        <th>Total Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sale in sales %}
+      <tr>
+        <td>{{ sale.date_created }}</td>
+        <td>{{ sale.product.name }}</td>
+        <td>{{ sale.total_amount }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if sales.has_other_pages %}
+    <div class="pagination">
+      {% if sales.has_previous %}
+        <a href="?page={{ sales.previous_page_number }}&search={{ search_query }}&date_filter={{ date_filter }}&money_filter={{ money_filter }}">previous</a>
+      {% endif %}
+      <span class="current">
+        Page {{ sales.number }} of {{ sales.paginator.num_pages }}.
+      </span>
+      {% if sales.has_next %}
+        <a href="?page={{ sales.next_page_number }}&search={{ search_query }}&date_filter={{ date_filter }}&money_filter={{ money_filter }}">next</a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+           
+        </div>
+    </section>
+    <!-- End sales list -->
+
+    
+    <!-- End view sale Modal  -->
+{% endblock content %}
+
+

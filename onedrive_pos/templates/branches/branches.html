@@ -2,7 +2,7 @@
 {% block content %}
 
 
-
+{% include 'scripts/main_loader.html' %}
 <!-- page title -->
 <div class="pagetitle">
     <h1 class="h5 text-md font-weight-bold text-primary text-uppercase mb-1">Branches</h1>
@@ -15,7 +15,7 @@
 </div><!-- End Page Title -->
 
 
-{% include 'scripts/messages.html' with messages=messages %}
+{% include 'scripts/messages.html' %}
 
 
 <!-- page indoc styling  -->
@@ -242,7 +242,17 @@ border-radius: 30px;
 
 
 
-
+{% if messages %}
+    {% with message=messages.first %}
+        <script>
+            Swal.fire({
+                title: '{{ message.tags }}',
+                text: '{{ message }}',
+                icon: '{{ message.tags }}' == 'success' ? 'success' : 'error'
+            });
+        </script>
+    {% endwith %}
+{% endif %}
 
 <!-- branch list in cards -->
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

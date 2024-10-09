@@ -1,6 +1,10 @@
 {% extends 'dashboard/admin_dashboard.html' %}
 {% block content %}
 
+
+
+
+
 <!-- pagetitle -->
 <div class="pagetitle">
     <h1 class="h5 text-md font-weight-bold text-primary text-uppercase mb-1">Products</h1>
@@ -227,6 +231,14 @@ margin-top: 5px;
 
 
 }
+#filter{
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: rgb(206, 96, 114);
+  color: white;
+  border-color:rgb(206, 96, 114) ;
+}
+
 
   
 
@@ -235,7 +247,7 @@ margin-top: 5px;
 <!-- end styling -->
 
 
-
+{% include 'scripts/main_loader.html' %}
 
 <!-- all products list -->
  <section class="section profile">
@@ -261,6 +273,14 @@ margin-top: 5px;
                               <i class="fas fa-search fa-sm"></i>
                           </button>
                       </div>
+                      <select name="category" class="custom-select">
+                        <option value="">All categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category_query == category.id %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" id="filter">Filter</button>
+
                   </div>
                 </form>
                 </li>
@@ -295,8 +315,8 @@ margin-top: 5px;
                               <tr>
                                 
                                 <th>ID</th>
+                                <th>Category</th>
                                 <th>Name</th>
-                                
                                 <th>Car Make</th>
                                 <th>Car Model</th>
                                 <th>Quantity</th>
@@ -310,6 +330,7 @@ margin-top: 5px;
                               {% for product in products %}
                               <tr>
                                 <td>{{ product.id }}</td>
+                                <td>{{ product.category }}</td>
                                 <td>{{ product.name }}</td>
                                 <td>{{ product.make }}</td>
                                 <td>{{ product.model }}</td>
@@ -325,7 +346,7 @@ margin-top: 5px;
                                 <td>
 
                                   <a href="{% url 'products:product_update' product.id %}" data-bs-toggle="modal" data-bs-target="#editproduct-{{ forloop.counter }}" class="btn btn-info btn-circle btn-sm">
-                                    <i class="fas fa-pencil" ></i><i class="fa-solid fa-pencil"></i>
+                                    <i class="fas fa-pencil" ></i><i class="fas fa-pen"></i>
                                 </a>
                               |
                                   <a href="{% url 'products:product_delete' product.id %}" data-bs-toggle="modal" data-bs-target="#deletep-{{ forloop.counter }}" 
@@ -395,7 +416,7 @@ margin-top: 5px;
             </div>
             <!-- product creation form -->
             <div class="modal-body" >
-              <form method="POST" action="{% url 'products:product_create' %}" enctype="multipart/form-data" id="createproduct" >
+              <form method="POST" action="{% url 'products:product_create' %}"  id="createproduct" >
                 {% csrf_token %}
                
                 <div class="modal-body">					
@@ -431,17 +452,31 @@ margin-top: 5px;
                     <div class="form-group">
                       <label>Product Quantity</label>
                       <input type="number" class="form-control floating-input"   name='quantity'  required>
-                  </div>
+                    </div>
 
+                   
 
-                  <div class="form-group">
-                    <label for="branch">Branch:</label>
-                    <select name="branch" id="branch" class="custom-select">
-                        {% for branch in branch %}
-                            <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
+                    
+
+                    <div class="form-group">
+                      <label for="category">Product categories</label>
+                      <select name="category" id="category" class="custom-select" required>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
                         {% endfor %}
-                    </select>
-                  </div>
+                      </select>
+                      <div class="invalid-feedback">Choose category.</div>
+                    </div>
+
+
+                    <div class="form-group">
+                      <label for="branch">Branch:</label>
+                      <select name="branch" id="branch" class="custom-select">
+                          {% for branch in branch %}
+                              <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
+                          {% endfor %}
+                      </select>
+                    </div>
                 </div>
             </form>
               
@@ -449,9 +484,7 @@ margin-top: 5px;
             </div>
             <div class="modal-footer"  >
                 <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Close</button>
-                <button  class="btn btn-primary btn-user " type="submit" form="createproduct" >
-                  Save product
-              </button>  
+                <button  class="btn btn-primary btn-user " type="submit" form="createproduct" >Save product</button>  
             </div>
             </div> 
         </div>
@@ -468,7 +501,7 @@ margin-top: 5px;
         </div>
         <!-- product creation form -->
         <div class="modal-body text-center" >
-            <form class="user" method="POST"  action="{% url 'products:upload_products_csv' %}" enctype="multipart/form-data" >
+            <form class="user" method="POST"  action="{% url 'products:upload_products_csv' %}" enctype="multipart/form-data" id="csvform" >
                 {% csrf_token %}
                     <div class="form-group row">
                       <div class="form-group">
@@ -484,7 +517,7 @@ margin-top: 5px;
             </form>
         </div>
         <div class="modal-footer text-center"  >
-          <button  class="btn btn-primary btn-user " type="submit" >Upload</button>  
+          <button  class="btn btn-primary btn-user " type="submit" form="csvform" >Upload</button>  
           <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Close</button>
         </div>
         </div> 
@@ -562,17 +595,28 @@ margin-top: 5px;
                     <div class="form-group">
                       <label>Product Quantity</label>
                       <input type="number" class="form-control floating-input"   name='quantity' value="{{ product.quantity }}" required>
-                  </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="category">Product categories</label>
+                      <select name="category" id="category" class="custom-select" required>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                      </select>
+                      <div class="invalid-feedback">Choose category.</div>
+                    </div>
 
 
-                  <div class="form-group">
+
+                   <div class="form-group">
                     <label for="branch">Branch:</label>
                     <select name="branch" id="branch" class="custom-select">
                         {% for branch in branch %}
                             <option value="{{ branch.id }}"{% if product.branch.id == branch.id %} selected{% endif %}>{{ branch.name }}</option>
                         {% endfor %}
                     </select>
-                  </div>
+                   </div>
                 </div>
             </form>
             <div class="modal-footer">

@@ -1,7 +1,7 @@
 {% extends 'dashboard/manager_dashboard.html' %}
 {% block content %}
 
-
+{% include 'scripts/main_loader.html' %}
 <!-- pagetiltle -->
 <div class="pagetitle">
     <h2  class=" h5 text-md font-weight-bold text-primary text-uppercase mb-1">Products in {{ request.user.employee.branch.name }} Branch </h2>
@@ -126,6 +126,7 @@
                             <thead id="tablehead">
                               <tr>
                                 <th>Name</th>
+                                <th>Category</th>
                                 <th>Description</th>
                                 <th>Car Make</th>
                                 <th>Car Model</th>
@@ -141,6 +142,7 @@
                               <tr>
 
                                 <td>{{ product.name }}</td>
+                                <td>{{ product.category }}</td>
                                 <td>{{ product.description }}</td>
                                 <td>{{ product.make }}</td>
                                 <td>{{ product.model }}</td>

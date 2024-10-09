@@ -209,13 +209,13 @@
                 </div>
                 <div class="mt-4 text-center small">
                     <div class="mr-2">
-                        <i class="fas fa-circle text-primary mr-2"></i>{{top_products_names_list.0}}
+                        <i class="fas fa-circle text-primary mr-2"></i>{{top_products_names}}
                     </div>
                     <div class="mr-2 mt-2">
-                        <i class="fas fa-circle text-success mr-2"></i>{{top_products_names_list.1}}
+                        <i class="fas fa-circle text-success mr-2"></i>{{top_products_names}}
                     </div>
                     <div class="mr-2 mt-2">
-                        <i class="fas fa-circle text-info mr-2"></i>{{top_products_names_list.2}}
+                        <i class="fas fa-circle text-info mr-2"></i>{{top_products_names}}
                     </div>
                 </div>
             </div>
@@ -279,7 +279,7 @@
 <!--Monthly earnings variable-->
 <input type="hidden" id="monthly_earnings"  value="{{monthly_earnings|safe}}">
 <!--Top products names variable-->
-<input type="hidden" id="top_products_names"  value="{{top_products_names}}">
+<input type="hidden" id="top_products_names"  value="{{top_products_names | safe}}">
 <!--Top products quantity variable-->
 <input type="hidden" id="top_products_quantity"  value="{{top_products_quantity|safe}}">
 <!--Chart area-->

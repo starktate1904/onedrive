@@ -1,97 +1,184 @@
 <!-- receipt.html -->
 {% load static %}
 <div class="receipt">
-    <div class="row">
-        <div class="receipt-main col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3">
-            <div class="row">
-                <div class="receipt-header">
-                    <div class="col-xs-6 col-sm-6 col-md-6">
-                        <div class="receipt-left">
-                            <img src="{% static 'logo.png' %}" alt="Logo" width="100" height="100">
-                        </div>
-                    </div>
-                    <div class="col-xs-6 col-sm-6 col-md-6 text-right">
-                        <div class="receipt-right">
-                            <h5>OneDrive.</h5>
-                            <p>+263 718910821<i class="fa fa-phone"></i></p>
-                            <p>info@onedrive.com <i class="fa fa-envelope-o"></i></p>
-                            <p>Harare, Zimbabwe <i class="fa fa-location-arrow"></i></p>
-                        </div>
-                    </div>
-                </div>
+  <div class="row">
+    <div class="receipt-main ">
+      <div class="row">
+        <div class="receipt-header">
+          <div class="col-xs-6 col-sm-6 col-md-6">
+            <div class="receipt-left">
+              <img src="{% static 'img/logo.png' %}" alt="Logo" width="50" height="50">
             </div>
-            
-            <div class="row">
-                <div class="receipt-header receipt-header-mid">
-                    <div class="col-xs-8 col-sm-8 col-md-8 text-left">
-                        <div class="receipt-right">
-                            <h5>Sale ID: <small>  |   {{ sale.id }} </small></h5>
-                            <p><b>Date :</b>{{sale.date}}</p>
-                            <p><b>Cashier:</b>{{sale.cashier.employee.username}}</p>
-                        </div>
-                    </div>
-                    <div class="col-xs-4 col-sm-4 col-md-4">
-                        <div class="receipt-left">
-                            <h1>Receipt</h1>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+            <div class="receipt-right">
+              <h5>OneDrive.</h5>
+              <p>+263 718910821<i class="fa fa-phone"></i></p>
+              <p>info@onedrive.com <i class="fa fa-envelope-o"></i></p>
+              <p>Harare, Zimbabwe <i class="fa fa-location-arrow"></i></p>
             </div>
-            
-            <div>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    {% for item in sale_items %}
-                    <tbody>
-                        <tr>
-                            <td class="col-md-9">{{ item.product.name }}</td>
-                            <td class="col-md-9">{{  item.quantity }} </td>
-                            <td class="col-md-9">{{ item.total }}</td>
-                            <td class="col-md-3"><i class="fa fa-inr"></i>{{ item.price }}</td>
-                        </tr>
-                        {% endfor %}
-                        <tr>
-                            <td class="text-right">
-                            <p>
-                                <strong>Total Amount: {{ sale.total_amount }}</strong>
-                            </p>
-                            <p>
-                                <strong>Amount Paid: {{ amount_paid }}</strong>
-                            </p>
-                            <p>
-                                <strong>Change:{{ change }} </strong>
-                            </p>
-                        </td>
-                        </tr>
-                        <tr>
-                           
-                            <td class="text-right"><h2><strong>Total: </strong></h2></td>
-                            <td class="text-left text-danger"><h2><strong><i class="fa fa-inr"></i>{{ sale.total_amount }}</strong></h2></td>
-                        </tr>
-                    </tbody>
-                </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="receipt-header receipt-header-mid">
+          <div class="col-xs-8 col-sm-8 col-md-8 text-left">
+            <div class="receipt-right">
+              <h5>Sale ID: <small>{{ sale.id }}</small></h5>
+              <p><b>Date :</b>{{ sale.date_created }}</p>
+              <p><b>Cashier:</b>{{employee.user.first_name}} {{employee.user.last_name}}</p>
             </div>
-            
-            <div class="row">
-                <div class="receipt-header receipt-header-mid receipt-footer">
-                    <div class="col-xs-8 col-sm-8 col-md-8 text-left">
-                        <div class="receipt-right">
-                            <p><b>Date :</b>{{today}}</p>
-                            <h5 style="color: rgb(140, 140, 140);">Thank you for doing business with us.!</h5>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div class="col-xs-4 col-sm-4 col-md-4">
+            <div class="receipt-left">
+              <h1>Receipt</h1>
             </div>
-            
-        </div>    
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="table">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in sale_items %}
+              <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.total }}</td>
+                <td><i class="fa fa-inr"></i>{{ item.product.price }}</td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td colspan="3" class="text-right">
+                  <p>
+                    <strong>Total Amount: {{ sale.total_amount }}</strong>
+                  </p>
+                  <p>
+                    <strong>Amount Paid: {{ amount_paid }}</strong>
+                  </p>
+                  <p>
+                    <strong>Change: {{ change }}</strong>
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3" class="text-right">
+                  <h2><strong>Total: </strong></h2>
+                </td>
+                <td class="text-left text-danger">
+                  <h2><strong><i class="fa fa-inr"></i>{{ sale.total_amount }}</strong></h2>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="receipt-header receipt -header-mid receipt-footer">
+          <div class="col-xs-8 col-sm-8 col-md-8 text-left">
+            <div class="receipt-right">
+              <p><b>Date :</b>{{ today }}</p>
+              <h5 style="color: rgb(140, 140, 140);">Thank you for doing business with us.!</h5>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
+<style>
+    .receipt {
+        overflow-y: auto;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 16px; /* Adjusted font size for modal */
+        line-height: 1.5;
+        color: #333;
+        background-color: #f9f9f9;
+        padding: 20px; /* Adjusted padding for modal */
+        border: none; /* Removed border to fit within modal */
+        border-radius: 0; /* Removed border radius to fit within modal */
+        box-shadow: none; /* Removed box shadow to fit within modal */
+      }
+      
+      .receipt-main {
+        background-color: #fff;
+        padding: 20px; /* Adjusted padding for modal */
+      }
+      
+      .receipt-header {
+        background-color: #f9f9f9;
+        padding: 5px; /* Adjusted padding for modal */
+        border-bottom: 1px solid #ddd;
+        align-content: center;
+      }
+      
+      .receipt-header-mid {
+        background-color: #fff;
+        padding: 5px; /* Adjusted padding for modal */
+        border-bottom: 1px solid #ddd;
+      }
+      
+      .receipt-footer {
+        background-color: #f9f9f9;
+        padding: 15px; /* Adjusted padding for modal */
+        border-top: 1px solid #ddd;
+      }
+      
+      .receipt-left {
+        float: left;
+      }
+      .receipt-right{
+        float: right;
 
+      }
+      
+     
+      
+      .table-responsive {
+        overflow-x: auto;
+      }
+      
+      .table-bordered {
+        border: 1px solid #ddd;
+      }
+      
+      .table-bordered th, .table-bordered td {
+        border: 1px solid #ddd;
+        padding: 15px; /* Adjusted padding for modal */
+      }
+      
+      .text-danger {
+        color: #d9534f;
+      }
+      
+      .fa-inr {
+        font-size: 20px; /* Adjusted font size for modal */
+        margin-right: 10px;
+      }
+      
+      h1, h2, h3, h4, h5 {
+        font-size: 15px; /* Adjusted font size for modal */
+        margin-bottom: 2px;
+      }
+      .text-danger {
+        color: #d9534f;
+      }
+      
+      .fa-inr {
+        font-size: 12px;
+        margin-right: 5px;
+      }
+
+</style>
